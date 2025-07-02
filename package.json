@@ -1,0 +1,26 @@
+{
+  "name": "sett_test_project",
+  "version": "1.0.0",
+  "author": "mind",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsx build.ts -dev",
+    "build": "tsx build.ts -build"
+  },
+  "dependencies": {
+    "@types/mime": "^4.0.0",
+    "@types/howler": "2.2.12",
+    "@types/express": "5.0.3",
+    "@types/pako": "2.0.3",
+    "@types/three": "0.178.0",
+    "express": "5.1.0",
+    "typescript": "5.8.3",
+    "esbuild": "0.25.5",
+    "tsx": "4.20.3",
+    "base64-js": "1.5.1",
+    "pixi.js":"^8.10.2",
+    "three": "0.178.0",
+    "howler":"^2.2.4",
+    "pako": "^2.1.0"
+  }
+}
