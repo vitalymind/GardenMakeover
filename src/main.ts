@@ -2,11 +2,14 @@
 
 import { Container, Sprite, Texture, WebGLRenderer as PIXI_WebGLRenderer } from "pixi.js";
 import { AmbientLight, BoxGeometry, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, WebGLRenderer as THREE_WebGLRenderer } from "three";
-
-import { Environment } from "./Environment";
+import { Group, update as Tween_update } from "@tweenjs/tween.js"
+import { Environment } from "./classes/Environment";
+import { ThreeCameraController } from "./classes/three/ThreeCameraController";
+import { GameController } from "./classes/GameController";
+import { loadAssets } from "./loader";
 
 //Debug FPS meter
-const debug_showFPS = true;
+const debug_showFPS = false;
 if (debug_showFPS) {
     const div = document.createElement("div");
     div.style.display = "flex";
@@ -76,32 +79,45 @@ export async function main(): Promise<void> {
             stencil: true,
             powerPreference: "high-performance",
         }),
-        camera: new PerspectiveCamera(),
+        cameraController: new ThreeCameraController(),
         stage: new Scene(),
     }
     Environment.three.renderer.setPixelRatio(window.devicePixelRatio);
     
     /*
+        Preaparet Tween
+    */
+    Environment.tweenGroup = new Group();
+
+    /*
         Loop stages
     */
     const tick = (): void => {
         Environment.gameTimeMs += Environment.deltaTimeMs;
+
+        Environment.tweenGroup.update(Environment.gameTimeMs);
     }
 
 	const render = (): void => {
         Environment.three.renderer.resetState();
-        Environment.three.renderer.render(Environment.three.stage, Environment.three.camera);
+        Environment.three.renderer.render(Environment.three.stage, Environment.three.cameraController.camera);
 
         Environment.pixi.renderer.resetState();
         Environment.pixi.renderer.render({container: Environment.pixi.stage});
     }
 
+    const resize = (): void => {
+        const w = Environment.width;
+        const h = Environment.height;
+        Environment.three.cameraController.resize(w,h);
+    }
 
     /*
         Loop
     */
     let previousTime: number | null;
     const deltaTimes: number[] = [];
+    let inited = false;
 
     const loop = (timeMiliseconds: number): void => {
         /*
@@ -109,16 +125,30 @@ export async function main(): Promise<void> {
         */
         if (previousTime === undefined || previousTime === null) {previousTime = timeMiliseconds;}
         Environment.deltaTimeMs = timeMiliseconds - previousTime;
-        deltaTimes.push(Environment.deltaTimeMs);
-        if (deltaTimes.length >= 20) {
-            const avrgDeltaTime = deltaTimes.reduce((a, b) => a + b, 0) / deltaTimes.length;
-            Environment.averageFPS = Math.round(1000 / avrgDeltaTime);
-            deltaTimes.length = 0;
-            /* debug:start */
-            const elem = document.getElementById("debug_fpsMeter");
-            if (elem) {
-                (elem as HTMLSpanElement).textContent = `${Environment.averageFPS} - ${Math.floor(Environment.gameTimeMs / 1000)}`;
+        if (debug_showFPS) {
+            deltaTimes.push(Environment.deltaTimeMs);
+            if (deltaTimes.length >= 20) {
+                const avrgDeltaTime = deltaTimes.reduce((a, b) => a + b, 0) / deltaTimes.length;
+                Environment.averageFPS = Math.round(1000 / avrgDeltaTime);
+                deltaTimes.length = 0;
+                /* debug:start */
+                const elem = document.getElementById("debug_fpsMeter");
+                if (elem) {
+                    (elem as HTMLSpanElement).textContent = `${Environment.averageFPS} - ${Math.floor(Environment.gameTimeMs / 1000)}`;
+                }
             }
+        }
+
+        /*
+            Init happen once, after all assets are loaded
+        */
+        if (!inited) {
+            inited = true;
+
+            Environment.gc = new GameController();
+            Environment.width = window.innerWidth;
+            Environment.height = window.innerHeight;
+            resize();
         }
 
         tick();
@@ -127,6 +157,15 @@ export async function main(): Promise<void> {
         previousTime = timeMiliseconds;
         window.requestAnimationFrame(loop);
     }
+
+    await loadAssets();
+
+    window.addEventListener("resize", () => {
+        if (window.innerWidth == 0 && window.innerHeight > 0) {return}
+        Environment.width = window.innerWidth;
+        Environment.height = window.innerHeight;
+        resize();
+    });
 
     loop(performance.now());
 }

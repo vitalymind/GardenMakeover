@@ -1,5 +1,8 @@
+import { Group } from "@tweenjs/tween.js";
 import { Container, WebGLRenderer as PIXI_WebGLRenderer } from "pixi.js";
-import { PerspectiveCamera, Scene, WebGLRenderer as THREE_WebGLRenderer } from "three";
+import { Scene, WebGLRenderer as THREE_WebGLRenderer } from "three";
+import { ThreeCameraController } from "./three/ThreeCameraController";
+import { GameController } from "./GameController";
 
 interface Pixi {
     renderer: PIXI_WebGLRenderer;
@@ -8,7 +11,7 @@ interface Pixi {
 
 interface Three {
     renderer: THREE_WebGLRenderer;
-    camera: PerspectiveCamera;
+    cameraController: ThreeCameraController;
     stage: Scene;
 }
 
@@ -17,7 +20,14 @@ export class Environment {
     static averageFPS: number = 0;
     static gameTimeMs: number = 0;
 
+    static width: number;
+    static height: number;
+
     static pixi: Pixi;
     static three: Three;
+
+    static tweenGroup: Group;
+
+    static gc: GameController;
 }
 window.env = Environment;

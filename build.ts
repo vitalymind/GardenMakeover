@@ -13,22 +13,19 @@ async function build(): Promise<void> {
         entryPoints: [path.join(PATH_ROOT, 'src/main.ts')],
         bundle: true,
         sourcemap: false,
-        minify: true,
+        minify: false,
         write: false,
         platform: "browser",
-        outfile: path.join(PATH_SERVE, 'bundle.js'),
-        logLevel: "info"
+        logLevel: "info",
+        loader: {
+            '.png': 'dataurl',
+            '.glb': 'dataurl',
+        },
     });
 
-    if (result.outputFiles.length != 1) {
-    console.error(`Error building project, outputFiles length: ${result.outputFiles.length}`);
-    return
-    }
     const bundle = result.outputFiles?.[0].text;
     const htmlTemplate = fs.readFileSync(PATH_HTML, 'utf-8');
-
     const finalHtml = htmlTemplate.replace('<!-- SCRIPT_HERE -->', `${bundle}`);
-
     fs.writeFileSync(path.join(PATH_BUILD, "game.html"), finalHtml);
 }
 
@@ -40,7 +37,11 @@ async function startDev(): Promise<void> {
         minify: false,
         platform: "browser",
         outfile: path.join(PATH_SERVE, 'bundle.js'),
-        logLevel: "info"
+        logLevel: "info",
+        loader: {
+            '.png': 'dataurl',
+            '.glb': 'dataurl',
+        },
     });
 
     const app = express();
