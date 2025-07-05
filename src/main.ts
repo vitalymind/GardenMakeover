@@ -4,7 +4,7 @@ import { Container, Sprite, Texture, WebGLRenderer as PIXI_WebGLRenderer } from 
 import { AmbientLight, BoxGeometry, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, WebGLRenderer as THREE_WebGLRenderer } from "three";
 import { Group, update as Tween_update } from "@tweenjs/tween.js"
 import { Environment } from "./classes/Environment";
-import { ThreeCameraController } from "./classes/three/ThreeCameraController";
+import { ThreeCameraController } from "./classes/ThreeCameraController";
 import { GameController } from "./classes/GameController";
 import { loadAssets } from "./loader";
 
@@ -69,18 +69,21 @@ export async function main(): Promise<void> {
     /*
         Prepare Three renderer
     */
+    const threeRenderer = new THREE_WebGLRenderer({
+        canvas: canvas,
+        context: renderContext,
+        precision: "highp",
+        antialias: true,
+        alpha: false,
+        stencil: true,
+        powerPreference: "high-performance",
+    });
+    const threeStage = new Scene();
+    const threeCameraController = new ThreeCameraController(threeStage);
     Environment.three = {
-        renderer: new THREE_WebGLRenderer({
-            canvas: canvas,
-            context: renderContext,
-            precision: "highp",
-            antialias: true,
-            alpha: false,
-            stencil: true,
-            powerPreference: "high-performance",
-        }),
-        cameraController: new ThreeCameraController(),
-        stage: new Scene(),
+        renderer: threeRenderer,
+        stage: threeStage,
+        cameraController: threeCameraController,
     }
     Environment.three.renderer.setPixelRatio(window.devicePixelRatio);
     
@@ -96,6 +99,7 @@ export async function main(): Promise<void> {
         Environment.gameTimeMs += Environment.deltaTimeMs;
 
         Environment.tweenGroup.update(Environment.gameTimeMs);
+        Environment.three.cameraController.update(Environment.deltaTimeMs);
     }
 
 	const render = (): void => {

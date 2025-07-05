@@ -132,11 +132,6 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.25.5.tgz#7fc114af5f6563f19f73324b5d5ff36ece0803d1"
   integrity sha512-TXv6YnJ8ZMVdX+SXWVBo/0p8LTcrUYngpWjvm91TMjjBQii7Oz11Lw5lbDV5Y0TzuhSJHwiH4hEtC1I42mMS0g==
 
-"@jgoz/esbuild-plugin-html@^1.0.11":
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/@jgoz/esbuild-plugin-html/-/esbuild-plugin-html-1.0.11.tgz#fa59f5596f36acde19594c2b7494f46eef817906"
-  integrity sha512-5SIvCls6lIiuEUjWpYs0dSgmpp4c7qEbyZ6pimWHD7M58Hx2HWz5949xxkXo6EyKCi6AxcJphLKDLwArjKTJfg==
-
 "@pixi/colord@^2.9.6":
   version "2.9.6"
   resolved "https://registry.yarnpkg.com/@pixi/colord/-/colord-2.9.6.tgz#7e4e7851480da6fd3cef4e331f008d60be7e1204"
@@ -699,11 +694,6 @@ once@^1.4.0:
   dependencies:
     wrappy "1"
 
-pako@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/pako/-/pako-2.1.0.tgz#266cc37f98c7d883545d11335c00fbd4062c9a86"
-  integrity sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==
-
 parse-svg-path@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/parse-svg-path/-/parse-svg-path-0.1.2.tgz#7a7ec0d1eb06fa5325c7d3e009b859a09b5d49eb"
@@ -720,9 +710,9 @@ path-to-regexp@^8.0.0:
   integrity sha512-TdrF7fW9Rphjq4RjrW0Kp2AW0Ahwu9sRGTkS6bvDi0SCwZlEZYmcfDbEsTz8RVk0EHIS/Vd1bv3JhG+1xZuAyQ==
 
 pixi.js@^8.10.2:
-  version "8.10.2"
-  resolved "https://registry.yarnpkg.com/pixi.js/-/pixi.js-8.10.2.tgz#42759ff3f7fbf3d1f583ece80448a76dcac5cc9d"
-  integrity sha512-utRKxzTwNsIhaxOikxIBxKPfxuOyVkPvdYipY23ZEyWSYhONosrQlcB9nymeIcbsrsuSdwExX0eTnHTDjTN3UQ==
+  version "8.11.0"
+  resolved "https://registry.yarnpkg.com/pixi.js/-/pixi.js-8.11.0.tgz#27505990fa63d59117db69a9e2b83fc3b9585ae9"
+  integrity sha512-dyuThzncsgEgJZnvd/A/5x6IkUERbK+phXqUQrI+0C6WE+8xqGH5VChRTLecemhgZF0kQ+gZOM3tJTX9937xpg==
   dependencies:
     "@pixi/colord" "^2.9.6"
     "@types/css-font-loading-module" "^0.0.12"

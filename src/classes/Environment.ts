@@ -1,7 +1,7 @@
 import { Group } from "@tweenjs/tween.js";
 import { Container, WebGLRenderer as PIXI_WebGLRenderer } from "pixi.js";
 import { Scene, WebGLRenderer as THREE_WebGLRenderer } from "three";
-import { ThreeCameraController } from "./three/ThreeCameraController";
+import { ThreeCameraController } from "./ThreeCameraController";
 import { GameController } from "./GameController";
 
 interface Pixi {

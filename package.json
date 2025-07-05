@@ -5,23 +5,23 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsx build.ts -dev",
-    "build": "tsx build.ts -build"
+    "build": "tsx build.ts -build",
+    "gen": "tsx build.ts -gen"
   },
   "dependencies": {
-    "@types/mime": "^4.0.0",
-    "@types/howler": "2.2.12",
+    "@tweenjs/tween.js": "25.0.0",
     "@types/express": "5.0.3",
+    "@types/howler": "2.2.12",
+    "@types/mime": "^4.0.0",
     "@types/pako": "2.0.3",
     "@types/three": "0.178.0",
-    "express": "5.1.0",
-    "typescript": "5.8.3",
-    "esbuild": "0.25.5",
-    "tsx": "4.20.3",
     "base64-js": "1.5.1",
-    "pixi.js":"^8.10.2",
+    "esbuild": "0.25.5",
+    "express": "5.1.0",
+    "howler": "^2.2.4",
+    "pixi.js": "^8.10.2",
     "three": "0.178.0",
-    "howler":"^2.2.4",
-    "pako": "^2.1.0",
-    "@tweenjs/tween.js": "25.0.0"
+    "tsx": "4.20.3",
+    "typescript": "5.8.3"
   }
 }

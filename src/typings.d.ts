@@ -3,6 +3,7 @@ declare module "*.json" {
     export default value;
 }
 
+declare module "*.webp";
 declare module "*.png";
 declare module "*.jpg";
 declare module "*.mp3";
