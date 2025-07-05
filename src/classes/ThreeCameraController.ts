@@ -1,8 +1,10 @@
 import  {Euler,EulerTuple,Mesh,Object3D,PerspectiveCamera,Quaternion,Raycaster,Scene,SkinnedMesh,Vector2,Vector3,Vector3Tuple } from "three";
 import { Environment } from "./Environment";
 import { Easing, Tween } from "@tweenjs/tween.js"
-import { TransformControls,TransformControlsMode } from "three/examples/jsm/controls/TransformControls.js";
-import { GameController } from "./GameController";
+import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
+import { r3 } from "../helpers";
+import { models } from "../loader";
+import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 interface ThreeCameraSnapshot {
     p: Vector3Tuple;
@@ -12,22 +14,32 @@ interface ThreeCameraSnapshot {
 class DebugObjectManipulator {
     private ray: Raycaster;
 
-    private boundMousedown: () => void;
-    private bouonKeyPressndMousedown: () => void;
+    private boundMousedown: (event: MouseEvent) => void;
+    private boundMousemove: (event: MouseEvent) => void;
+    private boundKeydown: (event: KeyboardEvent) => void;
     private _isEnabled = false;
 
-    transformControls: TransformControls;
-    beingTransformed = false;
-    selected: Object3D | undefined;
+    private transformControls: TransformControls;
+    private beingTransformed = false;
+    private selected: Object3D | undefined;
+
+    private cursorIndex: number | undefined;
+    private cursorPos = new Vector3();
+    private cursorModel = "";
+    cursor: Object3D;
 
     constructor(private camera: PerspectiveCamera, private stage: Scene) {
         this.boundMousedown = this.mousedown.bind(this);
-        this.onKeyPress = this.onKeyPress.bind(this);
+        this.boundKeydown = this.keydown.bind(this);
+        this.boundMousemove = this.mousemove.bind(this);
 
         this.ray = new Raycaster();
 
         this.transformControls = new TransformControls(this.camera,window.document.body);
-        this.stage.add(this.transformControls.getHelper());
+        stage.add(this.transformControls.getHelper());
+
+        this.cursor = new Object3D();
+        stage.add(this.cursor);
 
         this.transformControls.addEventListener("mouseDown", e => {
             if (!this.selected) {return;}
@@ -54,16 +66,19 @@ class DebugObjectManipulator {
 
     private addListners(): void {
         window.addEventListener("pointerdown", this.boundMousedown);
-        window.addEventListener("keydown", this.onKeyPress)
+        window.addEventListener("keydown", this.boundKeydown)
+        document.addEventListener("pointermove", this.boundMousemove);
     }
 
     private removeListners(): void {
         window.removeEventListener("pointerdown", this.boundMousedown);
-        window.removeEventListener("keydown", this.onKeyPress);
+        window.removeEventListener("keydown", this.boundKeydown);
+        document.removeEventListener("pointermove", this.boundMousemove);
     }
 
-    private onKeyPress(event: KeyboardEvent): void {
-        if (event.key == "r") {
+    private keydown(event: KeyboardEvent): void {
+        //console.log(event.code);
+        if (event.code == "KeyR") {
             const mode = this.transformControls.getMode();
             this.transformControls.setMode(
                 mode == "translate" ? "rotate":
@@ -71,20 +86,81 @@ class DebugObjectManipulator {
                 "translate"
             );
         }
-        if (event.key == "t") {
+        if (event.code == "KeyT") {
             this.transformControls.setSpace(this.transformControls.space == "local" ? "world": "local");
+        }
+        if (event.code == "ArrowRight") {
+            this.nextCursorObject(1);
+        }
+        if (event.code == "ArrowLeft") {
+            this.nextCursorObject(-1);
+        }
+        if (event.code == "Escape") {
+            if (this.cursor.children.length > 0) {
+                this.cursor.children[0].removeFromParent();
+                this.cursorModel = "";
+                this.cursorIndex = undefined;
+                this.cursorPos.set(0,0,0);
+            }
+        }
+        if (event.code == "Delete") {
+            if (this.selected) {
+                const trackable = Environment.gc.gameScene.trackableObjects;
+                for (const key of Object.keys(trackable)) {
+                    if (this.selected == trackable[key]) {
+                        trackable[key].removeFromParent();
+                        delete trackable[key];
+                        this.select(undefined);
+                    }
+                }
+            }
         }
     }
 
     private mousedown(event: MouseEvent): void {
         if (event.button == 0) {
-            if (this.beingTransformed) {
-                return;
-            }
-            const trackable = this.raycast(event);
+            if (this.cursor.children.length > 0) {
+                Environment.gc.gameScene.makeStaticObject({
+                    n: this.cursorModel,
+                    p: this.cursorPos.toArray(),
+                    r: [0,0,0,0],
+                    s: [1,1,1]
+                });
 
-            this.select(trackable);
+            } else {
+                if (this.beingTransformed) {return;}
+                const trackable = this.raycast(event);
+                this.select(trackable);
+            }
         }
+    }
+
+    private mousemove(event: MouseEvent): void {
+        if (this.cursor.children.length > 0) {
+            this.raycast(event);
+            this.cursor.position.copy(this.cursorPos);
+        }
+    }
+
+    private nextCursorObject(dir: number): void {
+        if (Object.keys(models).length == 0) {
+            console.log(`[Cursor]: No models to scroll through`);
+            return;
+        }
+        const arr = Object.keys(models);
+        if (this.cursorIndex === undefined) {this.cursorIndex = 0}
+        else {
+            //Scroll through array
+            let next = this.cursorIndex + dir;
+            if (next == -1) {next = arr.length - 1}
+            this.cursorIndex = next % arr.length;
+        }
+        for (const child of this.cursor.children) {
+            this.cursor.remove(child);
+        }
+        this.cursor.add(clone(models[arr[this.cursorIndex]].scene));
+        this.cursorModel = arr[this.cursorIndex];
+        console.log(`[Cursor]: Cursor object set to ${arr[this.cursorIndex]}`)
     }
 
     private raycast(event: MouseEvent): Object3D | undefined {
@@ -100,6 +176,9 @@ class DebugObjectManipulator {
         for (const hit of intersects) {
             const obj = hit.object;
             if (obj instanceof Mesh || obj instanceof SkinnedMesh) {
+                //Save hit pos for cursor
+                this.cursorPos.copy(hit.point);
+
                 let trackable: Object3D;
                 obj.traverseAncestors(o => {
                     if (allTrackable.includes(o)) {trackable = o;}
@@ -107,13 +186,12 @@ class DebugObjectManipulator {
                 if (trackable) {return trackable;}
             }
         }
+        this.cursorPos.set(0,0,0);
         return null;
     }
 
-    select(object: Object3D): void {
-        if (!this._isEnabled) {
-            return;
-        }
+    private select(object: Object3D | undefined): void {
+        if (!this._isEnabled) {return;}
         this.selected = object;
         if (this.selected) {
             this.transformControls.attach(object);
@@ -121,18 +199,11 @@ class DebugObjectManipulator {
             this.transformControls.detach();
         }
     }
-
-    setSelectedPos(x: number, y: number, z: number): void {
-        if (!this.selected) {
-            return;
-        }
-        this.selected.position.set(x, y, z);
-    }
 }
 
 class DebugCameraControls {
-    cameraMoveSpeed = 5;
-    cameraRotationSpeed = 2.5;
+    cameraMoveSpeed = 1;
+    cameraRotationSpeed = 1.5;
 
     private _dragToLook = true;
     private _autoForward = false;
@@ -172,6 +243,20 @@ class DebugCameraControls {
         this.boundMousedown = this.mousedown.bind(this);
         this.boundMouseup = this.mouseup.bind(this);
     }
+
+    private makeSnapShot(): void {
+        const s: ThreeCameraSnapshot = {
+            p: this._object.position.toArray(),
+            r: this._object.rotation.toArray()
+        };
+        let text = "";
+        text += `{p:[${r3(s.p[0])},${r3(s.p[1])},${r3(s.p[2])}],`;
+        text += `r:[${r3(s.r[0])},${r3(s.r[1])},${r3(s.r[2])}]}`;
+
+        console.log("Camera snapshot created");
+
+        window.navigator.clipboard.writeText(text);
+    }  
 
     private addListners(): void {
         document.addEventListener("contextmenu", this.contextmenu);
@@ -226,49 +311,16 @@ class DebugCameraControls {
     }
 
     private keydown(event: KeyboardEvent): void {
-        if (event.altKey) {
-            return;
-        }
-        if (event.shiftKey && event.code == "KeyD") {
-            return;
-        }
+        if (event.altKey) {return;}
 
-        switch (event.code) {
-            case "KeyW":
-                this._moveState.forward = 1;
-                break;
-            case "KeyS":
-                this._moveState.back = 1;
-                break;
+        if (event.code == "KeyW") {this._moveState.forward = 1}
+        else if (event.code == "KeyS" && !event.shiftKey) {this._moveState.back = 1}
+        else if (event.code == "KeyA") {this._moveState.left = 1}
+        else if (event.code == "KeyD") {this._moveState.right = 1}
+        else if (event.code == "KeyQ") {this._moveState.down = 1}
+        else if (event.code == "KeyE") {this._moveState.up = 1}
 
-            case "KeyA":
-                this._moveState.left = 1;
-                break;
-            case "KeyD":
-                this._moveState.right = 1;
-                break;
-
-            case "ArrowUp":
-                this._moveState.pitchUp = 1;
-                break;
-            case "ArrowDown":
-                this._moveState.pitchDown = 1;
-                break;
-
-            case "ArrowLeft":
-                this._moveState.yawLeft = 1;
-                break;
-            case "ArrowRight":
-                this._moveState.yawRight = 1;
-                break;
-
-            case "KeyQ":
-                this._moveState.down = 1;
-                break;
-            case "KeyE":
-                this._moveState.up = 1;
-                break;
-        }
+        else if (event.code == "KeyC" && event.shiftKey) {this.makeSnapShot()}
 
         this.updateMovementVector();
         this.updateRotationVector();
@@ -343,10 +395,9 @@ class DebugCameraControls {
         this.updateRotationVector();
     }
 
-    deg2rad(degrees: number): number {
+    private deg2rad(degrees: number): number {
         return (degrees * Math.PI) / 180;
     };
-
 
     update(deltams: number): void {
         if (!this._isEnabled) {
@@ -400,16 +451,6 @@ class DebugCameraControls {
             -this._moveState.pitchDown + this._moveState.pitchUp;
         this._rotationVector.y +=
             +this._moveState.yawRight - this._moveState.yawLeft;
-    }
-
-    getContainerDimensions(): {
-        size: [number, number];
-        offset: [number, number];
-    } {
-        return {
-            size: [window.innerWidth, window.innerHeight],
-            offset: [0, 0]
-        };
     }
 }
 
@@ -478,13 +519,6 @@ export class ThreeCameraController {
         return this._fov;
     }
 
-    /**
-     * Setup camera settings
-     * @param opt.far
-     * @param opt.near
-     * @param opt.zoom
-     * @param opt.fov
-     */
     setupCamera(opt: {far?: number;near?: number;zoom?: number;fov?: number;}): void {
         if (opt.far != undefined) {
             this._far = Math.max(0, opt.far);
@@ -510,12 +544,8 @@ export class ThreeCameraController {
     }
 
     setTo(opt: { p?: Vector3Tuple; r?: EulerTuple }): void {
-        if (opt.p) {
-            this.camera.position.set(opt.p[0], opt.p[1], opt.p[2]);
-        }
-        if (opt.r) {
-            this.camera.rotation.set(opt.r[0], opt.r[1], opt.r[2]);
-        }
+        if (opt.p) {this.camera.position.set(opt.p[0], opt.p[1], opt.p[2]);}
+        if (opt.r) {this.camera.rotation.set(opt.r[0], opt.r[1], opt.r[2]);}
     }
 
     private _moveTweens: Tween<Vector3>[] = [];
@@ -535,9 +565,7 @@ export class ThreeCameraController {
         for (const p of points) {
             snapshots.push({
                 pos: new Vector3(...p.p),
-                rot: new Quaternion().setFromEuler(
-                    new Euler(...p.r)
-                )
+                rot: new Quaternion().setFromEuler(new Euler(...p.r))
             });
         }
 
@@ -545,9 +573,7 @@ export class ThreeCameraController {
         let totalDistance = 0;
         for (let i = 0; i < snapshots.length; i++) {
             const pFrom = snapshots[i].pos;
-            const dist = pFrom.distanceTo(
-                i == 0 ? this.camera.position.clone() : snapshots[i - 1].pos
-            );
+            const dist = pFrom.distanceTo(i == 0 ? this.camera.position.clone() : snapshots[i - 1].pos);
             totalDistance += dist;
             distances.push(dist);
         }
@@ -557,35 +583,21 @@ export class ThreeCameraController {
         }
 
         for (let i = 0; i < snapshots.length; i++) {
-            const fromPos =
-                i == 0 ? this.camera.position.clone() : snapshots[i - 1].pos;
+            const fromPos = i == 0 ? this.camera.position.clone() : snapshots[i - 1].pos;
             const toPos = snapshots[i].pos;
-            const fromRot =
-                i == 0 ? this.camera.quaternion.clone() : snapshots[i - 1].rot;
+            const fromRot = i == 0 ? this.camera.quaternion.clone() : snapshots[i - 1].rot;
             const toRot = snapshots[i].rot;
             const time = (distances[i] / totalDistance) * totalTime;
 
-            const easing =
-                i == 0
-                    ? Easing.Sinusoidal.In
-                    : i == snapshots.length - 1
-                    ? Easing.Sinusoidal.Out
-                    : undefined;
-            const newMoveTween = this.tweenMoveFromTo(
-                fromPos,
-                toPos,
-                time,
-                easing
-            );
-            if (i != 0) {
-                this._moveTweens[i - 1].chain(newMoveTween);
-            }
+            const easing = i == 0 ? Easing.Sinusoidal.In :
+                i == snapshots.length - 1 ? Easing.Sinusoidal.Out :
+                undefined;
+            const newMoveTween = this.tweenMoveFromTo(fromPos,toPos,time,easing);
+            if (i != 0) {this._moveTweens[i - 1].chain(newMoveTween)}
             this._moveTweens.push(newMoveTween);
 
             const newRotTween = this.tweenRotFromTo(fromRot, toRot, time);
-            if (i != 0) {
-                this._rotTweens[i - 1].chain(newRotTween);
-            }
+            if (i != 0) {this._rotTweens[i - 1].chain(newRotTween)}
             this._rotTweens.push(newRotTween);
         }
 
@@ -593,40 +605,22 @@ export class ThreeCameraController {
         this._rotTweens[0].start();
     }
 
-    private tweenMoveFromTo(
-        pStart: Vector3,
-        pEnd: Vector3,
-        seconds: number,
-        easing?: (k: number) => number
-    ): Tween<any> {
+    private tweenMoveFromTo(pStart: Vector3,pEnd: Vector3,seconds: number,easing?: (k: number) => number): Tween<any> {
         const time = { t: 0 };
         return new Tween(time)
             .to({ t: 1 }, seconds * 1000)
             .easing(easing || Easing.Linear.None)
-            .onUpdate(() => {
-                this.camera.position.lerpVectors(pStart, pEnd, time.t);
-            })
-            .onComplete(() => {
-                this.camera.position.copy(pEnd);
-            });
+            .onUpdate(() => {this.camera.position.lerpVectors(pStart, pEnd, time.t);})
+            .onComplete(() => {this.camera.position.copy(pEnd);});
     }
 
-    private tweenRotFromTo(
-        qStart: Quaternion,
-        qEnd: Quaternion,
-        seconds: number,
-        easing?: (k: number) => number
-    ): Tween<any> {
+    private tweenRotFromTo(qStart: Quaternion,qEnd: Quaternion,seconds: number,easing?: (k: number) => number): Tween<any> {
         const time = { t: 0 };
         return new Tween(time)
             .to({ t: 1 }, seconds * 1000)
             .easing(easing || Easing.Sinusoidal.InOut)
-            .onUpdate(() => {
-                this.camera.quaternion.slerpQuaternions(qStart, qEnd, time.t);
-            })
-            .onComplete(() => {
-                this.camera.quaternion.copy(qEnd);
-            });
+            .onUpdate(() => {this.camera.quaternion.slerpQuaternions(qStart, qEnd, time.t);})
+            .onComplete(() => {this.camera.quaternion.copy(qEnd);});
     }
 
     update(dtms: number): void {

@@ -113,6 +113,9 @@ export async function main(): Promise<void> {
     const resize = (): void => {
         const w = Environment.width;
         const h = Environment.height;
+
+        Environment.three.renderer.setSize(w,h);
+
         Environment.three.cameraController.resize(w,h);
     }
 

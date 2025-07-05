@@ -20,9 +20,6 @@ importedGltf.push({name: "bag", dataUrl: Model_bag_glb});
 import Model_barn_glb from "../assets/models/barn.glb";
 importedGltf.push({name: "barn", dataUrl: Model_barn_glb});
 
-import Model_barn_01_glb from "../assets/models/barn_01.glb";
-importedGltf.push({name: "barn_01", dataUrl: Model_barn_01_glb});
-
 import Model_chicken_glb from "../assets/models/chicken.glb";
 importedGltf.push({name: "chicken", dataUrl: Model_chicken_glb});
 
@@ -62,9 +59,6 @@ importedGltf.push({name: "ground_01", dataUrl: Model_ground_01_glb});
 import Model_hay_glb from "../assets/models/hay.glb";
 importedGltf.push({name: "hay", dataUrl: Model_hay_glb});
 
-import Model_placeholder_glb from "../assets/models/placeholder.glb";
-importedGltf.push({name: "placeholder", dataUrl: Model_placeholder_glb});
-
 import Model_pumkin_glb from "../assets/models/pumkin.glb";
 importedGltf.push({name: "pumkin", dataUrl: Model_pumkin_glb});
 
@@ -85,6 +79,9 @@ importedGltf.push({name: "strawberry_2", dataUrl: Model_strawberry_2_glb});
 
 import Model_strawberry_3_glb from "../assets/models/strawberry_3.glb";
 importedGltf.push({name: "strawberry_3", dataUrl: Model_strawberry_3_glb});
+
+import Model_terrain_glb from "../assets/models/terrain.glb";
+importedGltf.push({name: "terrain", dataUrl: Model_terrain_glb});
 
 import Model_tomato_1_glb from "../assets/models/tomato_1.glb";
 importedGltf.push({name: "tomato_1", dataUrl: Model_tomato_1_glb});
