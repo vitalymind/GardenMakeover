@@ -173,8 +173,10 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">common/bucket.png</key>
             <key type="filename">common/corn.png</key>
             <key type="filename">common/grape.png</key>
+            <key type="filename">common/hoe.png</key>
             <key type="filename">common/item_frame.png</key>
             <key type="filename">common/logo.webp</key>
             <key type="filename">common/strawberry.png</key>

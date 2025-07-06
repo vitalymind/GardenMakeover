@@ -488,10 +488,10 @@ export class ThreeCameraController {
         );
 
         this.debugCameraControls = new DebugCameraControls(this.camera);
-        this.debugCameraControls.enable = true;
+        //this.debugCameraControls.enable = true;
 
         this.debugObjectManipulator = new DebugObjectManipulator(this.camera, this.stage);
-        this.debugObjectManipulator.enable = true;
+        //this.debugObjectManipulator.enable = true;
     }
 
     set far(val: number) {

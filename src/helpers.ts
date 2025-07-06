@@ -1,7 +1,7 @@
 import { Tween } from "@tweenjs/tween.js";
 import { Environment } from "./classes/Environment";
 import { Container, Point, PointData } from "pixi.js";
-import { Vector3 } from "three";
+import { Material, Mesh, Object3D, Vector3 } from "three";
 
 export const r3 = (val: number): number => {
     return Math.round(val * 1000) / 1000;
@@ -102,4 +102,26 @@ export const threePosToPixiPoint = (parent: Container, pos: Vector3, offset = {x
     result.y += offset.y;
 
     return result;
+}
+
+export const getAllMaterials = (object: Object3D): Material[] => {
+    if (!object) {return undefined}
+
+    const result: Material[] = [];
+    object.traverse((child) => {
+        if (child instanceof Mesh) {
+            if (child.material instanceof Material) {
+                result.push(child.material);
+            }
+        }
+    });
+    return result
+}
+
+export const fadeMaterialAsync = async (mat: Material, time: number, out = true): Promise<void> => {
+    return new Promise(resolve =>{
+        mat.transparent = true;
+        mat.opacity = 0;
+        new Tween(mat).to({opacity: (out ? 0 : 1)}, time).group(Environment.tweenGroup).start(Environment.gameTimeMs).onComplete(()=>{resolve()});
+    });
 }

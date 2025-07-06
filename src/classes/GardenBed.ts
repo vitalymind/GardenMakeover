@@ -53,7 +53,7 @@ export class GardenBed extends Object3D {
             if (this.plant) {return}
 
             this.playSeedBagAnimation(type);
-            this.plant = new Plant(this);
+            this.plant = new Plant(this, type);
         });
         
         this.resize();
@@ -92,12 +92,12 @@ export class GardenBed extends Object3D {
         new Tween(bag.rotation).to({z: Math.PI*0.8}, 1000).delay(250).easing(Easing.Sinusoidal.InOut).group(grp).start(Environment.gameTimeMs)
 
 
-        await delay(700);
-        
-        //Seeds
+        await delay(150);
         this.playSeedVFX(type);
         
-        await delay(1600 + 350);
+        //Seeds
+        
+        await delay(1600 + 350 + 350);
 
         bag.rotation.set(0,0,0);
         bag.visible = false;
@@ -131,6 +131,10 @@ export class GardenBed extends Object3D {
     update(dt: number): void {
         if (this.seedsEmitter) {
             this.seedsEmitter.instance.position.copy(this.seedBag.position);
+        }
+
+        if (this.plant) {
+            this.plant.update(dt);
         }
     }
 

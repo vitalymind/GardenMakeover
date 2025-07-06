@@ -123,7 +123,7 @@ export async function main(): Promise<void> {
         });
 
         //Game controller
-        Environment.gc.update(Environment.gameTimeMs / 1000);
+        Environment.gc.update(Environment.deltaTimeMs / 1000);
     }
 
 	const render = (): void => {

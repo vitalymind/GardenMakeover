@@ -2,6 +2,7 @@ import { Vector3Tuple, Vector4Tuple } from "three";
 import { ThreeCameraSnapshot } from "./classes/ThreeCameraController";
 import { colorStringToRGB } from "./helpers";
 import { GardenBed } from "./classes/GardenBed";
+import { Plant } from "./classes/Plant";
 
 interface ModelConfig {
     castShadow: boolean;
@@ -54,11 +55,17 @@ export const UI_SEED_ITEM_POSITION: {[id: number]: number[][]} = {
     4: [[-1,-1],[1,-1],[-1,1],[1,1]]
 }
 
+export const SEEDING_TIME = 4;
+export const WATERING_TIME = 4;
+export const TRIMMING_TIME = 4;
+
+export type PlantAction = "water" | "trim";
 
 export interface EventArgs {
     "garden-bed-open-seed-menu": [bed: GardenBed],
     "seed-selected": [seedType: SeedType, bed: GardenBed],
     "pixi-clicked": [],
     "bed-position-changed": [],
+    "plant-open-action-menu": [plant: Plant, acttion: PlantAction, cb: ()=>void],
 }
 export type Events = keyof EventArgs;
