@@ -4,19 +4,24 @@ import { r3, remapClamped } from "../helpers";
 import { Environment } from "./Environment";
 import { GameScene } from "./GameScene";
 import { GardenBed } from "./GardenBed";
+import { Ui } from "./Ui";
 
 export class GameController {
     gameScene: GameScene;
+    ui: Ui;
+
     gardenBeds: GardenBed[] = [];
     private boundMousedown: (event: MouseEvent) => void;
-
     private ray: Raycaster;
 
     constructor() {
         //Creating scenery
         this.gameScene = new GameScene(this);
 
-        //Raycast
+        //Create UI
+        this.ui = new Ui(this);
+
+        //3D Interactivity
         this.ray = new Raycaster();
         this.boundMousedown = this.mousedown.bind(this);
         window.addEventListener("pointerdown", this.boundMousedown);
@@ -67,20 +72,12 @@ export class GameController {
     }
 
     update(dt: number): void {
+        this.ui.update(dt);
         for (const bed of this.gardenBeds) {bed.update(dt)}
     }
 
     resize(w:number, h:number): void {
-        const aspect = w/h
-        const camCtrl = Environment.three.cameraController;
-        if (w > h) {
-            camCtrl.fov = remapClamped(90,55,1,3,aspect);
-        } else {
-            camCtrl.fov = remapClamped(90,60,0,1,aspect);
-        }
-
-        for (const bed of this.gardenBeds) {bed.resize()}
-
-        console.log(`FOV: ${r3(camCtrl.fov)}`);
+        this.ui.resize();
+        for (const bed of this.gardenBeds) {bed.resize()};
     }
 }

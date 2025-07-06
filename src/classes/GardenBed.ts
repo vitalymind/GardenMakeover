@@ -61,20 +61,20 @@ export class GardenBed extends Object3D {
         //Scale
         new Tween(bag.scale).to({x:1,y:1,z:1}, 350).easing(Easing.Back.Out).group(grp).chain(
             new Tween(bag.scale).to({x:0,y:0,z:0}, 350).delay(1600).easing(Easing.Back.In).group(grp)
-        ).start();
+        ).start(Environment.gameTimeMs);
 
         //Side
         new Tween(bag.position).to({x:0}, 900).delay(250).easing(Easing.Sinusoidal.InOut).group(grp).chain(
-        ).start();
+        ).start(Environment.gameTimeMs);
 
         //Height
         new Tween(bag.position).to({y:3}, 350).delay(250).easing(Easing.Sinusoidal.InOut).group(grp).chain(
             new Tween(bag.position).to({y:1.5}, 1500).easing(Easing.Sinusoidal.InOut).group(grp).chain(
             )
-        ).start();
+        ).start(Environment.gameTimeMs);
 
         //Rotation
-        new Tween(bag.rotation).to({z: Math.PI*0.8}, 1000).delay(250).easing(Easing.Sinusoidal.InOut).group(grp).start()
+        new Tween(bag.rotation).to({z: Math.PI*0.8}, 1000).delay(250).easing(Easing.Sinusoidal.InOut).group(grp).start(Environment.gameTimeMs)
 
 
         await delay(700);
@@ -83,8 +83,6 @@ export class GardenBed extends Object3D {
         this.playSeedVFX();
         
         await delay(1600 + 350);
-
-
 
         bag.rotation.set(0,0,0);
         bag.visible = false;

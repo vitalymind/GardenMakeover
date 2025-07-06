@@ -2,7 +2,7 @@ import  {Euler,EulerTuple,Mesh,Object3D,PerspectiveCamera,Quaternion,Raycaster,S
 import { Environment } from "./Environment";
 import { Easing, Tween } from "@tweenjs/tween.js"
 import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
-import { r3 } from "../helpers";
+import { r3, remapClamped } from "../helpers";
 import { models } from "../loader";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
@@ -491,7 +491,7 @@ export class ThreeCameraController {
         this.debugCameraControls.enable = true;
 
         this.debugObjectManipulator = new DebugObjectManipulator(this.camera, this.stage);
-        //this.debugObjectManipulator.enable = true;
+        this.debugObjectManipulator.enable = true;
     }
 
     set far(val: number) {
@@ -644,9 +644,21 @@ export class ThreeCameraController {
         this.debugCameraControls.update(dtms);
     }
 
-    resize(width: number, height: number): void {
-        this.camera.aspect = width / height;
+    resize(): void {
+        const w = Environment.width;
+        const h = Environment.height;
+        const aspect = w/h;
+        const camCtrl = Environment.three.cameraController;
+        if (w > h) {
+            camCtrl.fov = remapClamped(90,55,1,3,aspect);
+        } else {
+            camCtrl.fov = remapClamped(90,60,0,1,aspect);
+        }
+
+        this.camera.aspect = aspect;
         this.camera.fov = this.calculateFOV(this._fov);
         this.camera.updateProjectionMatrix();
+
+        //console.log(`FOV: ${r3(camCtrl.fov)}`);
     }
 }

@@ -7,6 +7,9 @@ import { GameController } from "./GameController";
 interface Pixi {
     renderer: PIXI_WebGLRenderer;
     stage: Container;
+    gsf: number;
+    minWidth: number;
+    minHeight: number;
 }
 
 interface Three {

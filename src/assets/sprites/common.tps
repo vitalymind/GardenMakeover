@@ -70,7 +70,7 @@
         <key>pngOptimizationLevel</key>
         <uint>4</uint>
         <key>webpQualityLevel</key>
-        <uint>40</uint>
+        <uint>90</uint>
         <key>textureSubPath</key>
         <string></string>
         <key>textureFormat</key>
@@ -174,46 +174,45 @@
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">common/corn.png</key>
-            <key type="filename">common/cow.png</key>
             <key type="filename">common/grape.png</key>
-            <key type="filename">common/plus.png</key>
-            <key type="filename">common/sheep.png</key>
-            <key type="filename">common/skip_day.png</key>
+            <key type="filename">common/item_frame.png</key>
+            <key type="filename">common/logo.webp</key>
             <key type="filename">common/strawberry.png</key>
             <key type="filename">common/tomato.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
+                <point_f>0,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>64,64,128,128</rect>
+                <rect>128,128,256,256</rect>
                 <key>scale9Paddings</key>
-                <rect>64,64,128,128</rect>
+                <rect>128,128,256,256</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">common/money.png</key>
+            <key type="filename">common/cta.png</key>
+            <key type="filename">common/cta_shadow.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
+                <point_f>0,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>46,40,91,80</rect>
+                <rect>101,52,201,103</rect>
                 <key>scale9Paddings</key>
-                <rect>46,40,91,80</rect>
+                <rect>101,52,201,103</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
             <key type="filename">common/smoke.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
+                <point_f>0,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
@@ -228,7 +227,7 @@
             <key type="filename">common/smoke_alpha.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
+                <point_f>0,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
@@ -247,17 +246,7 @@
             <struct type="SpriteSheet">
                 <key>files</key>
                 <array>
-                    <filename>common/corn.png</filename>
-                    <filename>common/cow.png</filename>
-                    <filename>common/grape.png</filename>
-                    <filename>common/money.png</filename>
-                    <filename>common/plus.png</filename>
-                    <filename>common/sheep.png</filename>
-                    <filename>common/skip_day.png</filename>
-                    <filename>common/smoke.png</filename>
-                    <filename>common/smoke_alpha.png</filename>
-                    <filename>common/strawberry.png</filename>
-                    <filename>common/tomato.png</filename>
+                    <filename>common</filename>
                 </array>
             </struct>
         </map>

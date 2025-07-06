@@ -8,6 +8,7 @@ import { ThreeCameraController } from "./classes/ThreeCameraController";
 import { GameController } from "./classes/GameController";
 import { loadAssets } from "./loader";
 import { CycleData, updateParticleSystems } from "@newkrok/three-particles";
+import { Ui } from "./classes/Ui";
 
 //Debug FPS meter
 const debug_showFPS = true;
@@ -44,9 +45,14 @@ export async function main(): Promise<void> {
     /*
         Preapare Pixi renderer
     */
+    const pixiRenderer = new PIXI_WebGLRenderer();
+    const pixiStage = new Container();
     Environment.pixi = {
-        renderer: new PIXI_WebGLRenderer(),
-        stage: new Container()
+        renderer: pixiRenderer,
+        stage: pixiStage,
+        gsf: 1,
+        minWidth: 1920,
+        minHeight: 1080,
     }
     await Environment.pixi.renderer.init({
         width: window.innerWidth,
@@ -96,19 +102,22 @@ export async function main(): Promise<void> {
     /*
         Loop stages
     */
-
     const tick = (): void => {
+        //Delta time
         Environment.gameTimeMs += Environment.deltaTimeMs;
 
+        //Threejs
         Environment.tweenGroup.update(Environment.gameTimeMs);
         Environment.three.cameraController.update(Environment.deltaTimeMs);
 
+        //Particles
         updateParticleSystems({
             now: Date.now(),
             delta: Environment.deltaTimeMs / 1000,
             elapsed: Environment.gameTimeMs / 1000
         });
 
+        //Game controller
         Environment.gc.update(Environment.gameTimeMs / 1000);
     }
 
@@ -124,9 +133,19 @@ export async function main(): Promise<void> {
         const w = Environment.width;
         const h = Environment.height;
 
+        //Threejs
         Environment.three.renderer.setSize(w,h);
+        Environment.three.cameraController.resize();
 
-        Environment.three.cameraController.resize(w,h);
+        //Pixijs
+        Environment.pixi.gsf = h / Environment.pixi.minHeight;
+        if (Environment.pixi.minWidth * Environment.pixi.gsf > w) {
+            Environment.pixi.gsf = w / Environment.pixi.minWidth;
+        }
+        Environment.pixi.stage.scale.set(Environment.pixi.gsf);
+        Environment.pixi.stage.position.set(w/2,h/2);
+        Environment.pixi.renderer.resize(w, h);
+
         Environment.gc.resize(w, h);
     }
 

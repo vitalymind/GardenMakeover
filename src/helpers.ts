@@ -1,5 +1,6 @@
 import { Tween } from "@tweenjs/tween.js";
 import { Environment } from "./classes/Environment";
+import { Container } from "pixi.js";
 
 export const r3 = (val: number): number => {
     return Math.round(val * 1000) / 1000;
@@ -54,3 +55,35 @@ export const colorStringToRGB = (input: string, norm = false): { r: number; g: n
         b: Number("0x" + input.slice(5, 7)) / (norm ? 255 : 1)
     };
 };
+
+export interface ScaleOverAspect {
+    aspect: number;
+    interpolate: boolean;
+    scaleFactor: number;
+}
+
+export const adjustScaleOverAspect = (obj: Container, conf: ScaleOverAspect[]): void => {
+    const w = Environment.width;
+    const h = Environment.height;
+    const aspect = w/h;
+    const configs = Object.values(conf);
+    if (configs.length == 0) {return}
+    if (configs[0].aspect != 0) {throw '[Pixi] Config first item must have aspect = 0'}
+    
+    let from: ScaleOverAspect;
+    let to: ScaleOverAspect | undefined;
+    for (let i=0; i<configs.length; i++) {
+        if (aspect < configs[i].aspect) {
+            from = configs[i-1];
+            to = configs[i];
+            break;
+        }
+    }
+    if (!from && aspect >= configs[configs.length-1].aspect) {from = configs[configs.length-1];}
+
+    if (from && to && from.interpolate) {
+        obj.scale.set(remapClamped(from.scaleFactor, to.scaleFactor, from.aspect, to.aspect, aspect));
+    } else {
+        obj.scale.set(from.scaleFactor);
+    }
+}
