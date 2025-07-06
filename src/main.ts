@@ -3,7 +3,7 @@
 import { Container, Sprite, Texture, WebGLRenderer as PIXI_WebGLRenderer } from "pixi.js";
 import { AmbientLight, BoxGeometry, Clock, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, WebGLRenderer as THREE_WebGLRenderer } from "three";
 import { Group, update as Tween_update } from "@tweenjs/tween.js"
-import { Environment } from "./classes/Environment";
+import { Environment, EventManager } from "./classes/Environment";
 import { ThreeCameraController } from "./classes/ThreeCameraController";
 import { GameController } from "./classes/GameController";
 import { loadAssets } from "./loader";
@@ -98,6 +98,11 @@ export async function main(): Promise<void> {
         Preaparet Tween
     */
     Environment.tweenGroup = new Group();
+
+    /*
+        Events
+    */
+    Environment.events = new EventManager();
 
     /*
         Loop stages

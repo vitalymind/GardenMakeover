@@ -1,9 +1,11 @@
-import { Container, PointData, Sprite, Text, TextStyle } from "pixi.js";
+import { Container, Sprite, Text, TextStyle } from "pixi.js";
 import { Environment } from "./Environment";
 import { sprites } from "../loader";
 import { GameController } from "./GameController";
-import { remapClamped, adjustScaleOverAspect, ScaleOverAspect } from "../helpers";
+import { adjustScaleOverAspect, ScaleOverAspect, threePosToPixiPoint } from "../helpers";
 import { Tween } from "@tweenjs/tween.js";
+import { GardenBed } from "./GardenBed";
+import { SeedSelectWheel } from "./SeedSelectWheel";
 
 class Cta {
     root: Container;
@@ -16,7 +18,10 @@ class Cta {
         this.root.scale.set(1);
         this.root.pivot.set(40,-60);
         this.root.interactive = true;
-        this.root.on("pointerdown",()=>{this.onClick()});
+        this.root.on("pointerdown",()=>{
+            Environment.events.fire("pixi-clicked");
+            this.onClick();
+        });
         
         this.shadow = new Sprite(sprites['cta_shadow']);
         this.shadow.anchor.set(1,0);
@@ -59,6 +64,7 @@ export class Ui {
     stage: Container;
     logo: Sprite;
     cta: Cta;
+    seedSelectWheel: SeedSelectWheel;
 
     constructor(public game: GameController) {
         this.stage = Environment.pixi.stage;
@@ -68,9 +74,18 @@ export class Ui {
         this.logo.pivot.set(-20,-20);
         Environment.pixi.stage.addChild(this.logo);
 
+        this.seedSelectWheel = new SeedSelectWheel();
+        this.stage.addChild(this.seedSelectWheel.root);
+
         this.cta = new Cta();
         this.stage.addChild(this.cta.root);
+
+        Environment.events.on("garden-bed-open-seed-menu", (bed: GardenBed)=>{
+            this.seedSelectWheel.open(bed);
+        });
     }
+
+
 
     update(dt: number): void {
     }
@@ -86,8 +101,8 @@ export class Ui {
         //Logo transform
         const config: ScaleOverAspect[] = [
             {aspect: 0, interpolate: true, scaleFactor: 2.5},
-            {aspect: 1, interpolate: true, scaleFactor: 1},
-            {aspect: 3, interpolate: true, scaleFactor: 1.3}
+            {aspect: 1, interpolate: true, scaleFactor: 0.95},
+            {aspect: 2, interpolate: true, scaleFactor: 0.8}
         ]
         this.logo.position.copyFrom(topLeft);
         adjustScaleOverAspect(this.logo, config);
@@ -95,5 +110,8 @@ export class Ui {
         //CTA transform
         this.cta.root.position.set(botRight.x, topLeft.y);
         adjustScaleOverAspect(this.cta.root, config);
+
+        //SeedWheel transforms
+        this.seedSelectWheel.resize();
     }
 }

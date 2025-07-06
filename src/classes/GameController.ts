@@ -13,6 +13,7 @@ export class GameController {
     gardenBeds: GardenBed[] = [];
     private boundMousedown: (event: MouseEvent) => void;
     private ray: Raycaster;
+    private lastTimePixiClicked = 0;
 
     constructor() {
         //Creating scenery
@@ -25,6 +26,7 @@ export class GameController {
         this.ray = new Raycaster();
         this.boundMousedown = this.mousedown.bind(this);
         window.addEventListener("pointerdown", this.boundMousedown);
+        Environment.events.on("pixi-clicked", ()=>{this.lastTimePixiClicked = Environment.gameTimeMs});
 
         //Create garden beds
         this.gardenBeds.push( new GardenBed(this, "left") );
@@ -41,11 +43,12 @@ export class GameController {
 
     private mousedown(event: MouseEvent): void {
         if (event.button == 0) {
+            if (Math.round(Environment.gameTimeMs) == Math.round(this.lastTimePixiClicked)) {return}
+
             const hit = this.raycast(event);
             
             if (hit && hit.type == "gardenBed") {
-                const bed = hit.obj as GardenBed;
-                bed.playSeedBagAnimation();
+                (hit.obj as GardenBed).onClick();
             }
         }
     }

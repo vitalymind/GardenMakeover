@@ -1,6 +1,7 @@
 import { Tween } from "@tweenjs/tween.js";
 import { Environment } from "./classes/Environment";
-import { Container } from "pixi.js";
+import { Container, Point, PointData } from "pixi.js";
+import { Vector3 } from "three";
 
 export const r3 = (val: number): number => {
     return Math.round(val * 1000) / 1000;
@@ -86,4 +87,19 @@ export const adjustScaleOverAspect = (obj: Container, conf: ScaleOverAspect[]): 
     } else {
         obj.scale.set(from.scaleFactor);
     }
+}
+
+export const threePosToPixiPoint = (parent: Container, pos: Vector3, offset = {x:0, y:0}): PointData => {
+    const vector = pos.clone();
+    vector.project(Environment.three.cameraController.camera);
+    const x = (vector.x + 1) / 2 * Environment.width;
+    const y = (1 - vector.y) / 2 * Environment.height;
+    
+    const point = new Point(x, y);
+    const result = parent.toLocal(point);
+
+    result.x += offset.x;
+    result.y += offset.y;
+
+    return result;
 }

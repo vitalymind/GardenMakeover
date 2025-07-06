@@ -8,7 +8,11 @@ import {
     TRANSFORM_BED_MIDDLE_PORTRAIT,
     TRANSFORM_BED_RIGHT_PORTRAIT,
     Transform,
-    SEED_COLOR_CORN
+    SEED_COLOR_CORN,
+    SEED_COLOR_STRAWBERRY,
+    SEED_COLOR_TOMATO,
+    SEED_COLOR_GRAPE,
+    SeedType
 } from "../config";
 import { Object3D } from "three";
 import { models } from "../loader";
@@ -18,11 +22,14 @@ import { Easing, Tween } from "@tweenjs/tween.js";
 import { delay } from "../helpers";
 import { createParticleSystem, ParticleSystem } from "@newkrok/three-particles";
 import seeds_fall from "../assets/particles/seeds_fall.json";
+import { Plant } from "./Plant";
 
 type BedPos = "left"|"mid"|"right";
 
 export class GardenBed extends Object3D {
     private transformMode: "landscape" | "portrait" | "none" = "none";
+
+    plant: Plant | undefined;
 
     bedObject: Object3D;
     private seedBag: Object3D;
@@ -40,6 +47,14 @@ export class GardenBed extends Object3D {
         this.seedBag.name = `bag_${bedPos}`;
         this.seedBag.visible = false;
         this.add(this.seedBag);
+
+        Environment.events.on("seed-selected", (type:SeedType, bed: GardenBed)=>{
+            if (bed !== this) {return}
+            if (this.plant) {return}
+
+            this.playSeedBagAnimation(type);
+            this.plant = new Plant(this);
+        });
         
         this.resize();
     }
@@ -50,7 +65,7 @@ export class GardenBed extends Object3D {
         this.bedObject.quaternion.set(...transform.r);
     }
 
-    async playSeedBagAnimation(): Promise<void> {
+    async playSeedBagAnimation(type: SeedType): Promise<void> {
         const bag = this.seedBag;
         const grp = Environment.tweenGroup;
 
@@ -80,7 +95,7 @@ export class GardenBed extends Object3D {
         await delay(700);
         
         //Seeds
-        this.playSeedVFX();
+        this.playSeedVFX(type);
         
         await delay(1600 + 350);
 
@@ -88,12 +103,29 @@ export class GardenBed extends Object3D {
         bag.visible = false;
     }
 
-    private playSeedVFX(): void {
-        seeds_fall.startColor.min = SEED_COLOR_CORN[0];
-        seeds_fall.startColor.max = SEED_COLOR_CORN[1];
+    private playSeedVFX(type: SeedType): void {
+        if (type == "corn") {
+            seeds_fall.startColor.min = SEED_COLOR_CORN[0];
+            seeds_fall.startColor.max = SEED_COLOR_CORN[1];
+        } else if (type == "grape") {
+            seeds_fall.startColor.min = SEED_COLOR_GRAPE[0];
+            seeds_fall.startColor.max = SEED_COLOR_GRAPE[1];
+        } else if (type == "strawberry") {
+            seeds_fall.startColor.min = SEED_COLOR_STRAWBERRY[0];
+            seeds_fall.startColor.max = SEED_COLOR_STRAWBERRY[1];
+        } else if (type == "tomato") {
+            seeds_fall.startColor.min = SEED_COLOR_TOMATO[0];
+            seeds_fall.startColor.max = SEED_COLOR_TOMATO[1];
+        }
         //@ts-ignore
         this.seedsEmitter = createParticleSystem(seeds_fall);
         this.add(this.seedsEmitter.instance);
+    }
+
+    onClick(): void {
+        if (this.plant == undefined) {
+            Environment.events.fire("garden-bed-open-seed-menu", this);
+        }
     }
 
     update(dt: number): void {
@@ -124,7 +156,7 @@ export class GardenBed extends Object3D {
                 )
             }
         }
-    }
 
-    
+        Environment.events.fire("bed-position-changed");
+    }
 }

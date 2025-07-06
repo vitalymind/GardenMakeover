@@ -41,6 +41,9 @@ importedGltf.push({name: "cow", dataUrl: Model_cow_glb});
 import Model_fence_glb from "../assets/models/fence.glb";
 importedGltf.push({name: "fence", dataUrl: Model_fence_glb});
 
+import Model_flower_glb from "../assets/models/flower.glb";
+importedGltf.push({name: "flower", dataUrl: Model_flower_glb});
+
 import Model_garden_bed_glb from "../assets/models/garden_bed.glb";
 importedGltf.push({name: "garden_bed", dataUrl: Model_garden_bed_glb});
 
@@ -53,8 +56,11 @@ importedGltf.push({name: "grape_2", dataUrl: Model_grape_2_glb});
 import Model_grape_3_glb from "../assets/models/grape_3.glb";
 importedGltf.push({name: "grape_3", dataUrl: Model_grape_3_glb});
 
-import Model_grass_glb from "../assets/models/grass.glb";
-importedGltf.push({name: "grass", dataUrl: Model_grass_glb});
+import Model_grass_01_glb from "../assets/models/grass_01.glb";
+importedGltf.push({name: "grass_01", dataUrl: Model_grass_01_glb});
+
+import Model_grass_02_glb from "../assets/models/grass_02.glb";
+importedGltf.push({name: "grass_02", dataUrl: Model_grass_02_glb});
 
 import Model_hay_glb from "../assets/models/hay.glb";
 importedGltf.push({name: "hay", dataUrl: Model_hay_glb});
