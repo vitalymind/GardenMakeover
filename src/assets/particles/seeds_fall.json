@@ -1,0 +1,33 @@
+{
+    "duration": 1.5,
+    "looping": false,
+    "emission": {
+        "rateOverTime": 100.0,
+        "rateOverDistance": 0.0
+    },
+    "startSize": { "min": 0.5, "max": 0.7 },
+    "gravity": 10,
+    "sizeOverLifetime": {
+        "isActive": true,
+        "lifetimeCurve": {
+            "type": "BEZIER",
+            "scale": 1,
+            "bezierPoints": [
+                { "x": 0, "y": 0, "percentage": 0 },
+                { "x": 0.9, "y": 0.9, "percentage": 0.1 },
+                { "x": 1, "y": 1, "percentage": 1 }
+            ]
+        }
+    },
+    "shape": {
+        "shape": "BOX",
+        "box": {
+            "scale": {"x" : 1.5, "y" : 0.2, "z": 1.5 },
+            "emitFrom": "SHELL"
+        }
+    },
+    "startColor": {
+        "min": {"r":0,"g":0,"b":0},
+        "max": {"r":0,"g":0,"b":0}
+    }
+}

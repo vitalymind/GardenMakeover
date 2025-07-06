@@ -1,15 +1,16 @@
 /// <reference path="./globalTypes.d.ts" />
 
 import { Container, Sprite, Texture, WebGLRenderer as PIXI_WebGLRenderer } from "pixi.js";
-import { AmbientLight, BoxGeometry, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, WebGLRenderer as THREE_WebGLRenderer } from "three";
+import { AmbientLight, BoxGeometry, Clock, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, WebGLRenderer as THREE_WebGLRenderer } from "three";
 import { Group, update as Tween_update } from "@tweenjs/tween.js"
 import { Environment } from "./classes/Environment";
 import { ThreeCameraController } from "./classes/ThreeCameraController";
 import { GameController } from "./classes/GameController";
 import { loadAssets } from "./loader";
+import { CycleData, updateParticleSystems } from "@newkrok/three-particles";
 
 //Debug FPS meter
-const debug_showFPS = false;
+const debug_showFPS = true;
 if (debug_showFPS) {
     const div = document.createElement("div");
     div.style.display = "flex";
@@ -95,11 +96,20 @@ export async function main(): Promise<void> {
     /*
         Loop stages
     */
+
     const tick = (): void => {
         Environment.gameTimeMs += Environment.deltaTimeMs;
 
         Environment.tweenGroup.update(Environment.gameTimeMs);
         Environment.three.cameraController.update(Environment.deltaTimeMs);
+
+        updateParticleSystems({
+            now: Date.now(),
+            delta: Environment.deltaTimeMs / 1000,
+            elapsed: Environment.gameTimeMs / 1000
+        });
+
+        Environment.gc.update(Environment.gameTimeMs / 1000);
     }
 
 	const render = (): void => {
@@ -117,6 +127,7 @@ export async function main(): Promise<void> {
         Environment.three.renderer.setSize(w,h);
 
         Environment.three.cameraController.resize(w,h);
+        Environment.gc.resize(w, h);
     }
 
     /*
@@ -156,6 +167,8 @@ export async function main(): Promise<void> {
             Environment.width = window.innerWidth;
             Environment.height = window.innerHeight;
             resize();
+
+            Environment.gc.gameStart();
         }
 
         tick();

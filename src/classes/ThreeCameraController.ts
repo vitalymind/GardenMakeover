@@ -6,7 +6,7 @@ import { r3 } from "../helpers";
 import { models } from "../loader";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
-interface ThreeCameraSnapshot {
+export interface ThreeCameraSnapshot {
     p: Vector3Tuple;
     r: EulerTuple;
 }
@@ -103,13 +103,26 @@ class DebugObjectManipulator {
                 this.cursorPos.set(0,0,0);
             }
         }
+        if (event.code == "KeyD" && event.shiftKey) {
+            if (this.selected) {
+                const entries = Object.entries(models);
+                for (const entry of entries) {
+                    const [name, gltf] = entry;
+                    if (this.selected.name == name) {
+                        for (const child of this.cursor.children) {this.cursor.remove(child);}
+                        this.cursor.add(clone(gltf.scene));
+                        this.cursorModel = name;
+                    }
+                }
+            }
+        }
         if (event.code == "Delete") {
             if (this.selected) {
-                const trackable = Environment.gc.gameScene.trackableObjects;
-                for (const key of Object.keys(trackable)) {
-                    if (this.selected == trackable[key]) {
-                        trackable[key].removeFromParent();
-                        delete trackable[key];
+                const trackables = Environment.gc.gameScene.trackableObjects;
+                for (const key of Object.keys(trackables)) {
+                    if (this.selected == trackables[key]) {
+                        trackables[key].removeFromParent();
+                        delete trackables[key];
                         this.select(undefined);
                     }
                 }
@@ -160,7 +173,7 @@ class DebugObjectManipulator {
         }
         this.cursor.add(clone(models[arr[this.cursorIndex]].scene));
         this.cursorModel = arr[this.cursorIndex];
-        console.log(`[Cursor]: Cursor object set to ${arr[this.cursorIndex]}`)
+        console.log(`[Cursor]: Cursor object set to ${arr[this.cursorIndex]}`);
     }
 
     private raycast(event: MouseEvent): Object3D | undefined {
@@ -313,12 +326,14 @@ class DebugCameraControls {
     private keydown(event: KeyboardEvent): void {
         if (event.altKey) {return;}
 
-        if (event.code == "KeyW") {this._moveState.forward = 1}
-        else if (event.code == "KeyS" && !event.shiftKey) {this._moveState.back = 1}
-        else if (event.code == "KeyA") {this._moveState.left = 1}
-        else if (event.code == "KeyD") {this._moveState.right = 1}
-        else if (event.code == "KeyQ") {this._moveState.down = 1}
-        else if (event.code == "KeyE") {this._moveState.up = 1}
+        if (!event.shiftKey) {
+            if (event.code == "KeyW") {this._moveState.forward = 1}
+            else if (event.code == "KeyS") {this._moveState.back = 1}
+            else if (event.code == "KeyA") {this._moveState.left = 1}
+            else if (event.code == "KeyD") {this._moveState.right = 1}
+            else if (event.code == "KeyQ") {this._moveState.down = 1}
+            else if (event.code == "KeyE") {this._moveState.up = 1}
+        }
 
         else if (event.code == "KeyC" && event.shiftKey) {this.makeSnapShot()}
 
@@ -476,7 +491,7 @@ export class ThreeCameraController {
         this.debugCameraControls.enable = true;
 
         this.debugObjectManipulator = new DebugObjectManipulator(this.camera, this.stage);
-        this.debugObjectManipulator.enable = true;
+        //this.debugObjectManipulator.enable = true;
     }
 
     set far(val: number) {
@@ -593,12 +608,14 @@ export class ThreeCameraController {
                 i == snapshots.length - 1 ? Easing.Sinusoidal.Out :
                 undefined;
             const newMoveTween = this.tweenMoveFromTo(fromPos,toPos,time,easing);
+            Environment.tweenGroup.add(newMoveTween);
             if (i != 0) {this._moveTweens[i - 1].chain(newMoveTween)}
             this._moveTweens.push(newMoveTween);
 
             const newRotTween = this.tweenRotFromTo(fromRot, toRot, time);
             if (i != 0) {this._rotTweens[i - 1].chain(newRotTween)}
             this._rotTweens.push(newRotTween);
+            Environment.tweenGroup.add(newRotTween);
         }
 
         this._moveTweens[0].start();

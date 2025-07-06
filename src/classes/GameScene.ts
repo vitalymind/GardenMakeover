@@ -1,9 +1,13 @@
-import { AmbientLight, Mesh, MeshBasicMaterial, Object3D, Scene, SphereGeometry } from "three";
+import { AmbientLight, DirectionalLight, DirectionalLightHelper, HemisphereLight, Mesh, MeshBasicMaterial, Object3D, PCFSoftShadowMap, Scene, SkinnedMesh, SphereGeometry } from "three";
 import { GameController } from "./GameController";
 import { Environment } from "./Environment";
 import { models, textures } from "../loader";
 import { staticObjects, StaticObject } from "../generated/staticObjects";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
+import { colorStringToNumber } from "../helpers";
+import { CAMERA_INIT_POS, MODEL_CONFIGS } from "../config";
+
+
 
 export class GameScene {
     private stage: Scene;
@@ -17,16 +21,14 @@ export class GameScene {
         this.stage = Environment.three.stage;
 
         //Set camera
-        Environment.three.cameraController.setTo( {p:[3.552,7.194,24.122],r:[-0.378,-0.007,-0.003]} );
-        Environment.three.cameraController.setupCamera({
-            far: 1000,
-            near: 0.1,
-            zoom: 1,
-            fov: 70
-        });
+        Environment.three.cameraController.setTo( CAMERA_INIT_POS );
+        Environment.three.cameraController.setupCamera({far: 1000,near: 1,zoom: 1,fov: 70});
 
         //Create static objects
         for (const data of staticObjects) {this.makeStaticObject(data)};
+
+        //Setup shadows
+        this.setShadow();
 
         //Create skybox
         this.makeSkybox();
@@ -36,6 +38,23 @@ export class GameScene {
 
         //Debug
         this.registerListner();
+    }
+
+    private setShadow(): void {
+        for (const object of Object.values(this.trackableObjects)) {
+            object.traverse((o: Object3D)=>{
+                if (o instanceof Mesh || o instanceof SkinnedMesh) {
+                    const config = MODEL_CONFIGS[object.name];
+                    if (config) {
+                        o.castShadow = config.castShadow;
+                        o.receiveShadow = config.receiveShadow;
+                    } else {
+                        o.castShadow = true;
+                        o.receiveShadow = false;
+                    }
+                }
+            });
+        }
     }
 
     makeStaticObject(data: StaticObject): void {
@@ -54,14 +73,35 @@ export class GameScene {
     }
 
     private makeLights(): void {
-        const ambientLight = new AmbientLight(0xffffff, 2);
+        Environment.three.renderer.shadowMap.enabled = true;
+        Environment.three.renderer.shadowMap.type = PCFSoftShadowMap;
+
+        const ambientLight = new HemisphereLight(colorStringToNumber("#fff28d"), colorStringToNumber("#777788"), 2.5);
         this.stage.add(ambientLight);
+
+        const light = new DirectionalLight(colorStringToNumber("#f5ff82"), 1.5);
+        light.position.set(-25, 20, -15);
+        light.castShadow = true;
+        light.shadow.mapSize.width = 4096;
+        light.shadow.mapSize.height = 4096;
+        this.stage.add(light);
+
+        const d = 50; // Controls size of visible shadow area
+        light.shadow.camera.left = -d;
+        light.shadow.camera.right = d;
+        light.shadow.camera.top = d;
+        light.shadow.camera.bottom = -d;
+        light.shadow.camera.near = 1;
+        light.shadow.camera.far = 100;
+
+        const helper = new DirectionalLightHelper(light);
+        this.stage.add(helper);
     }
 
     private makeSkybox(): void {
         const geometry = new SphereGeometry( 500, 60, 40 );
         geometry.scale( -1, 1, 1 );
-        const material = new MeshBasicMaterial( { map: textures["skybox_resting_place"]} );
+        const material = new MeshBasicMaterial( { map: textures["skybox"]} );
         this.skyboxMesh = new Mesh( geometry, material );
         this.stage.add(this.skyboxMesh);
     }
