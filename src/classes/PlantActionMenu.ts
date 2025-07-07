@@ -4,7 +4,7 @@ import { sprites } from "../loader";
 import { Easing, Tween } from "@tweenjs/tween.js";
 import { PlantAction } from "../config";
 import { Plant } from "./Plant";
-import { threePosToPixiPoint } from "../helpers";
+import { adjustScaleOverAspect, ScaleOverAspect, threePosToPixiPoint } from "../helpers";
 
 export class PlantActionMenu extends Container {
     private frame: Sprite;
@@ -67,5 +67,12 @@ export class PlantActionMenu extends Container {
         const aspect = w/h;
 
         this.setPosToBed();
+
+        const config: ScaleOverAspect[] = [
+            {aspect: 0, interpolate: true, scaleFactor: 2.5},
+            {aspect: 1, interpolate: true, scaleFactor: 1.1},
+            {aspect: 2, interpolate: true, scaleFactor: 0.8}
+        ]
+        adjustScaleOverAspect(this, config);
     }
 }

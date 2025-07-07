@@ -215,7 +215,7 @@ class DebugObjectManipulator {
 }
 
 class DebugCameraControls {
-    cameraMoveSpeed = 1;
+    cameraMoveSpeed = 0.5;
     cameraRotationSpeed = 1.5;
 
     private _dragToLook = true;
@@ -488,7 +488,7 @@ export class ThreeCameraController {
         );
 
         this.debugCameraControls = new DebugCameraControls(this.camera);
-        //this.debugCameraControls.enable = true;
+        this.debugCameraControls.enable = true;
 
         this.debugObjectManipulator = new DebugObjectManipulator(this.camera, this.stage);
         //this.debugObjectManipulator.enable = true;
@@ -618,8 +618,8 @@ export class ThreeCameraController {
             Environment.tweenGroup.add(newRotTween);
         }
 
-        this._moveTweens[0].start();
-        this._rotTweens[0].start();
+        this._moveTweens[0].start(Environment.gameTimeMs);
+        this._rotTweens[0].start(Environment.gameTimeMs);
     }
 
     private tweenMoveFromTo(pStart: Vector3,pEnd: Vector3,seconds: number,easing?: (k: number) => number): Tween<any> {

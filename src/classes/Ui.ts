@@ -39,6 +39,7 @@ export class Ui {
             const newMenu = new PlantActionMenu(plant, action, cb);
             this.stage.addChild(newMenu);
             newMenu.show();
+            newMenu.resize();
             this.activeMenus.push(newMenu);
         });
     }

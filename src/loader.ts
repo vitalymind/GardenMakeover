@@ -76,8 +76,6 @@ export const loadAssets = async (): Promise<void> => {
         await loadImage(data);
     }
 
-    console.log(sprites);
-
     //Load three realated assets
     const textureLoader = new TextureLoader();
     const gltfLoader = new GLTFLoader();
