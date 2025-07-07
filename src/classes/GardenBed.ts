@@ -131,7 +131,6 @@ export class GardenBed extends Object3D {
         this.playHoeAnimation();
     }
 
-
     private async playSeedBagAnimation(type: SeedType): Promise<void> {
         const bag = this.seedBag;
         const grp = Environment.tweenGroup;

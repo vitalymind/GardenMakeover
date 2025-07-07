@@ -1,10 +1,9 @@
 import { Mesh, Object3D, Raycaster, SkinnedMesh, Vector2 } from "three";
-import { CAMERA_GAMEPLAY_POS, CAMERA_INTRO_TIME } from "../config";
-import { r3, remapClamped } from "../helpers";
 import { Environment } from "./Environment";
 import { GameScene } from "./GameScene";
 import { GardenBed } from "./GardenBed";
 import { Ui } from "./Ui";
+import { PLANTS_NEEDED_TO_GROW } from "../config";
 
 export class GameController {
     gameScene: GameScene;
@@ -14,6 +13,9 @@ export class GameController {
     private boundMousedown: (event: MouseEvent) => void;
     private ray: Raycaster;
     private lastTimePixiClicked = 0;
+    private allowClicks = false;
+    private grownPlants = 0;
+    gameFinished = false;
 
     constructor() {
         //Creating scenery
@@ -32,16 +34,28 @@ export class GameController {
         this.gardenBeds.push( new GardenBed(this, "left") );
         this.gardenBeds.push( new GardenBed(this, "mid") );
         this.gardenBeds.push( new GardenBed(this, "right") );
+
+        Environment.events.on("camera-intro-done", ()=>{
+            this.allowClicks = true;
+        });
+
+        Environment.events.on("plant-fully-grown", ()=>{
+            this.grownPlants += 1;
+            if (this.grownPlants == PLANTS_NEEDED_TO_GROW) {
+                this.gameFinished = true;
+                this.ui.hideUI();
+                this.ui.endScreen.show();
+            }
+        });
     }
 
     gameStart(): void {
-        const camCtrl = Environment.three.cameraController;
-
-        camCtrl.setTo(CAMERA_GAMEPLAY_POS);
-        //camCtrl.moveTo([CAMERA_GAMEPLAY_POS], CAMERA_INTRO_TIME);
+        this.gameScene.startCameraMove();
+        this.ui.unhideScreen();
     }
 
     private mousedown(event: MouseEvent): void {
+        if (!this.allowClicks || this.gameFinished) {return}
         if (event.button == 0) {
             if (Math.round(Environment.gameTimeMs) == Math.round(this.lastTimePixiClicked)) {return}
 
@@ -49,6 +63,7 @@ export class GameController {
             
             if (hit && hit.type == "gardenBed") {
                 (hit.obj as GardenBed).onClick();
+                Environment.events.fire("hide-tutorial");
             }
         }
     }
@@ -76,10 +91,13 @@ export class GameController {
 
     update(dt: number): void {
         this.ui.update(dt);
-        for (const bed of this.gardenBeds) {bed.update(dt)}
+        if (!this.gameFinished) {
+            for (const bed of this.gardenBeds) {bed.update(dt)}
+        }
     }
 
     resize(w:number, h:number): void {
+        this.gameScene.resize();
         this.ui.resize();
         for (const bed of this.gardenBeds) {bed.resize()};
     }

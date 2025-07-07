@@ -74,6 +74,12 @@ export interface ScaleOverAspect {
     scaleFactor: number;
 }
 
+export interface PositionOverAspect {
+    aspect: number;
+    interpolate: boolean;
+    position: PointData;
+}
+
 export const adjustScaleOverAspect = (obj: Container, conf: ScaleOverAspect[]): void => {
     const w = Environment.width;
     const h = Environment.height;
@@ -97,6 +103,35 @@ export const adjustScaleOverAspect = (obj: Container, conf: ScaleOverAspect[]): 
         obj.scale.set(remapClamped(from.scaleFactor, to.scaleFactor, from.aspect, to.aspect, aspect));
     } else {
         obj.scale.set(from.scaleFactor);
+    }
+}
+
+export const adjustPositionOverAspect = (obj: Container, conf: PositionOverAspect[]): void => {
+    const w = Environment.width;
+    const h = Environment.height;
+    const aspect = w/h;
+    const configs = Object.values(conf);
+    if (configs.length == 0) {return}
+    if (configs[0].aspect != 0) {throw '[Pixi] Config first item must have aspect = 0'}
+    
+    let from: PositionOverAspect;
+    let to: PositionOverAspect | undefined;
+    for (let i=0; i<configs.length; i++) {
+        if (aspect < configs[i].aspect) {
+            from = configs[i-1];
+            to = configs[i];
+            break;
+        }
+    }
+    if (!from && aspect >= configs[configs.length-1].aspect) {from = configs[configs.length-1];}
+
+    if (from && to && from.interpolate) {
+        obj.position.set(
+            remapClamped(from.position.x, to.position.x, from.aspect, to.aspect, aspect),
+            remapClamped(from.position.y, to.position.y, from.aspect, to.aspect, aspect)
+        );
+    } else {
+        obj.position.copyFrom(from.position);
     }
 }
 
@@ -127,14 +162,6 @@ export const getAllMaterials = (object: Object3D): MeshPhysicalMaterial[] => {
         }
     });
     return result
-}
-
-export const fadeMaterialAsync = async (mat: MeshPhysicalMaterial, time: number, out = true): Promise<void> => {
-    return new Promise(resolve =>{
-        mat.transparent = true;
-        mat.opacity = 0;
-        new Tween(mat).to({opacity: (out ? 0 : 1)}, time).group(Environment.tweenGroup).start(Environment.gameTimeMs).onComplete(()=>{resolve()});
-    });
 }
 
 export const asyncTweenMaterialColor = async (to: string, mat: MeshPhysicalMaterial, time: number):  Promise<void> => {

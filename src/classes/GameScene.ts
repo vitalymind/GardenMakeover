@@ -4,14 +4,16 @@ import { Environment } from "./Environment";
 import { models, textures } from "../loader";
 import { staticObjects, StaticObject } from "../generated/staticObjects";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
-import { colorStringToNumber } from "../helpers";
-import { CAMERA_INIT_POS, MODEL_CONFIGS } from "../config";
+import { colorStringToNumber, delay } from "../helpers";
+import { CAMERA_FOV_LANDSCAPE, CAMERA_FOV_PORTRAIT, CAMERA_GAMEPLAY_POS, CAMERA_INIT_POS, CAMERA_INTRO_TIME, CAMERA_OFFSET_LANDSCAPE, CAMERA_OFFSET_PORTRAIT, MODEL_CONFIGS } from "../config";
+import { ThreeCameraController } from "./ThreeCameraController";
 
 
 
 export class GameScene {
     private stage: Scene;
     private skyboxMesh: Mesh;
+    private camCtrl: ThreeCameraController;
 
     trackableObjects: {[id: string]: Object3D} = {}
 
@@ -21,8 +23,9 @@ export class GameScene {
         this.stage = Environment.three.stage;
 
         //Set camera
-        Environment.three.cameraController.setTo( CAMERA_INIT_POS );
-        Environment.three.cameraController.setupCamera({far: 1000,near: 1,zoom: 1,fov: 70});
+        this.camCtrl = Environment.three.cameraController;
+        this.camCtrl.setTo( CAMERA_INIT_POS );
+        this.camCtrl.setupCamera({far: 1000,near: 1,zoom: 1,fov: 70});
 
         //Create static objects
         for (const data of staticObjects) {this.makeStaticObject(data)};
@@ -37,7 +40,7 @@ export class GameScene {
         this.makeLights();
 
         //Debug
-        this.registerListner();
+        //this.registerListner();
     }
 
     private setShadow(): void {
@@ -70,6 +73,13 @@ export class GameScene {
 
         this.trackableObjects[`${data.n}_${GameScene.id++}`] = object;
         this.stage.add(object);
+    }
+
+    async startCameraMove(): Promise<void> {
+        //camCtrl.setTo(CAMERA_GAMEPLAY_POS);
+        this.camCtrl.moveTo([CAMERA_GAMEPLAY_POS], CAMERA_INTRO_TIME);
+        await delay(CAMERA_INTRO_TIME*1000);
+        Environment.events.fire("camera-intro-done");
     }
 
     private makeLights(): void {
@@ -106,9 +116,24 @@ export class GameScene {
         this.stage.add(this.skyboxMesh);
     }
 
+    resize(): void {
+        const w = Environment.width;
+        const h = Environment.height;
+        const aspect = w/h;
+        const handle = this.camCtrl.cameraHandle;
+        if (aspect < 1) {
+            handle.position.copy(CAMERA_OFFSET_PORTRAIT);
+            this.camCtrl.fov = CAMERA_FOV_PORTRAIT;
+        } else {
+            handle.position.copy(CAMERA_OFFSET_LANDSCAPE);
+            this.camCtrl.fov = CAMERA_FOV_LANDSCAPE;
+        }
+    }
+
     /*
         DEBUG
     */
+   /*
     private registerListner(): void {
         window.addEventListener("keydown", (event: KeyboardEvent)=>{
             if (event.shiftKey && event.code == "KeyS") {
@@ -143,4 +168,5 @@ export class GameScene {
             console.log("Error");
         }
     }
+    */
 }

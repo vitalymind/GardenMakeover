@@ -1,8 +1,9 @@
-import { Container, Sprite, TextStyle, Text } from "pixi.js";
+import { Container, Sprite, TextStyle, Text, PointData } from "pixi.js";
 import { Environment } from "./Environment";
 import { sprites } from "../loader";
 import { Tween } from "@tweenjs/tween.js";
 
+//Separate class because it scales from center, unlike es CTA
 export class Cta extends Container {
     private sprite: Sprite;
     private shadow: Sprite;
@@ -10,8 +11,6 @@ export class Cta extends Container {
 
     constructor() {
         super()
-        this.scale.set(1);
-        this.pivot.set(40,-60);
         this.interactive = true;
         this.on("pointerdown",()=>{
             Environment.events.fire("pixi-clicked");

@@ -470,6 +470,7 @@ class DebugCameraControls {
 }
 
 export class ThreeCameraController {
+    cameraHandle: Object3D;
     camera: PerspectiveCamera;
     private _fov: number = 110;
     private _near: number = 1;
@@ -487,8 +488,12 @@ export class ThreeCameraController {
             this._far
         );
 
+        this.cameraHandle = new Object3D();
+        this.cameraHandle.add(this.camera);
+        stage.add(this.cameraHandle);
+
         this.debugCameraControls = new DebugCameraControls(this.camera);
-        this.debugCameraControls.enable = true;
+        //this.debugCameraControls.enable = true;
 
         this.debugObjectManipulator = new DebugObjectManipulator(this.camera, this.stage);
         //this.debugObjectManipulator.enable = true;
