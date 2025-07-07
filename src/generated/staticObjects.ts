@@ -36,7 +36,6 @@ staticObjects.push({n:'tree_green', p:[-11.0252,4.1611,-5.1088], r:[0,0,0,0], s:
 staticObjects.push({n:'tree_red', p:[-13.297,4.1096,-10.1901], r:[0,0,0,0], s:[1,1,1]});
 staticObjects.push({n:'tree_red', p:[-5.7543,7.6209,-23.6125], r:[0,0,0,0], s:[1,1,1]});
 staticObjects.push({n:'tree_red', p:[2.6088,7.134,-28.2322], r:[0,0,0,0], s:[1.1873,1,1.9125]});
-staticObjects.push({n:'cow', p:[4.162,4.3171,7.9792], r:[0,-0.8009,0,-0.5989], s:[0.9,0.9,0.9]});
 staticObjects.push({n:'storage', p:[16.928,3.3699,12.5865], r:[0,-0.0983,0,0.9952], s:[1,1,1]});
 staticObjects.push({n:'hay', p:[9.7835,4.2978,7.8385], r:[0,0.52,0,0.8542], s:[1,1,1]});
 staticObjects.push({n:'fence', p:[10.3084,4.2564,5.8429], r:[0,-0.6284,0,0.7779], s:[1,1,1]});

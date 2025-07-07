@@ -16,6 +16,10 @@ import Sound_bloop_3 from "../assets/sounds/bloop_3.mp3"; importedSounds.push({n
 
 import Sound_click from "../assets/sounds/click.mp3"; importedSounds.push({name: "click", dataUrl: Sound_click});
 
+import Sound_cow from "../assets/sounds/cow.mp3"; importedSounds.push({name: "cow", dataUrl: Sound_cow});
+
+import Sound_cow_2 from "../assets/sounds/cow_2.mp3"; importedSounds.push({name: "cow_2", dataUrl: Sound_cow_2});
+
 import Sound_dig from "../assets/sounds/dig.mp3"; importedSounds.push({name: "dig", dataUrl: Sound_dig});
 
 import Sound_seeds from "../assets/sounds/seeds.mp3"; importedSounds.push({name: "seeds", dataUrl: Sound_seeds});
@@ -43,9 +47,6 @@ importedGltf.push({name: "barn", dataUrl: Model_barn_glb});
 
 import Model_bucket_glb from "../assets/models/bucket.glb";
 importedGltf.push({name: "bucket", dataUrl: Model_bucket_glb});
-
-import Model_chicken_glb from "../assets/models/chicken.glb";
-importedGltf.push({name: "chicken", dataUrl: Model_chicken_glb});
 
 import Model_corn_1_glb from "../assets/models/corn_1.glb";
 importedGltf.push({name: "corn_1", dataUrl: Model_corn_1_glb});
@@ -100,9 +101,6 @@ importedGltf.push({name: "pumkin", dataUrl: Model_pumkin_glb});
 
 import Model_seed_bag_glb from "../assets/models/seed_bag.glb";
 importedGltf.push({name: "seed_bag", dataUrl: Model_seed_bag_glb});
-
-import Model_sheep_glb from "../assets/models/sheep.glb";
-importedGltf.push({name: "sheep", dataUrl: Model_sheep_glb});
 
 import Model_stone_glb from "../assets/models/stone.glb";
 importedGltf.push({name: "stone", dataUrl: Model_stone_glb});

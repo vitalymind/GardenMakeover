@@ -5,10 +5,13 @@ import { GardenBed } from "./GardenBed";
 import { Ui } from "./Ui";
 import { PLANTS_NEEDED_TO_GROW } from "../config";
 import { sounds } from "../loader";
+import { Cow } from "./Cow";
 
 export class GameController {
     gameScene: GameScene;
     ui: Ui;
+
+    cow: Cow;
 
     gardenBeds: GardenBed[] = [];
     private boundMousedown: (event: MouseEvent) => void;
@@ -41,6 +44,9 @@ export class GameController {
         this.gardenBeds.push( new GardenBed(this, "mid") );
         this.gardenBeds.push( new GardenBed(this, "right") );
 
+        //Cow
+        this.cow = new Cow();
+
         Environment.events.on("camera-intro-done", ()=>{
             this.allowClicks = true;
         });
@@ -71,14 +77,14 @@ export class GameController {
         if (event.button == 0) {
             if (Math.round(Environment.gameTimeMs) == Math.round(this.lastTimePixiClicked)) {return}
             const hit = this.raycast(event);
-            if (hit && hit.type == "gardenBed") {
+            if (hit) {
                 (hit.obj as GardenBed).onClick();
                 Environment.events.fire("hide-tutorial");
             }
         }
     }
 
-    private raycast(event: MouseEvent): {obj: Object3D, type: "gardenBed" | "cow"} | undefined {
+    private raycast(event: MouseEvent): {obj: Object3D} | undefined {
         const point = new Vector2(
             (event.clientX / window.innerWidth) * 2 - 1,
             -(event.clientY / window.innerHeight) * 2 + 1
@@ -88,12 +94,14 @@ export class GameController {
         const intersects = this.ray.intersectObjects(Environment.three.stage.children, true);
         for (const hit of intersects) {
             const obj = hit.object;
+            
             if (obj instanceof Mesh || obj instanceof SkinnedMesh) {
                 let interactive: Object3D;
                 obj.traverseAncestors(o => {
-                    if (o instanceof GardenBed) {interactive = o}
+                    if (o instanceof GardenBed) {interactive = o;}
+                    else if (o instanceof Cow) {this.cow.click()}
                 });
-                if (interactive) {return {obj: interactive, type: "gardenBed"}}
+                if (interactive) {return {obj: interactive}}
             }
         }
         return undefined;
@@ -110,6 +118,7 @@ export class GameController {
         if (!this.gameFinished) {
             for (const bed of this.gardenBeds) {bed.update(dt)}
         }
+        this.cow.update(dt);
     }
 
     resize(w:number, h:number): void {
