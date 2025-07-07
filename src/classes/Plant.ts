@@ -2,9 +2,9 @@ import { GardenBed } from "./GardenBed";
 import { Material, Object3D } from "three";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { SEEDING_TIME, SeedType, TRIMMING_TIME, WATERING_TIME } from "../config";
-import { models } from "../loader";
+import { models, sounds } from "../loader";
 import { Easing, Tween } from "@tweenjs/tween.js";
-import { delay, getAllMaterials } from "../helpers";
+import { delay, getAllMaterials, randomRange } from "../helpers";
 import { Environment } from "./Environment";
 
 export class Plant {
@@ -17,6 +17,8 @@ export class Plant {
     private model_stage_1: Object3D;
     private model_stage_2: Object3D;
     private model_stage_3: Object3D;
+
+
 
     constructor(public gardenBed: GardenBed, private type: SeedType) {
         this.root = new Object3D();
@@ -66,6 +68,7 @@ export class Plant {
     }
 
     async playStage1(): Promise<void> {
+        Environment.events.fire("play-random-bloop-sfx");
         await this.showFirstStage();
         await delay(1100);
         this.gardenBed.changeDirtColor("dry");
@@ -76,6 +79,7 @@ export class Plant {
     }
 
     async playStage2(): Promise<void> {
+        Environment.events.fire("play-random-bloop-sfx");
         this.hideFirstStage();
         await this.showSecondStage();
         await delay(1100);
@@ -87,6 +91,7 @@ export class Plant {
     }
 
     async playStage3(): Promise<void> {
+        Environment.events.fire("play-random-bloop-sfx");
         this.hideSecondStage();
         await this.showThirdStage();
 

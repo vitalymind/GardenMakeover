@@ -1,7 +1,7 @@
 import { Container, Sprite } from "pixi.js";
 import { GardenBed } from "./GardenBed";
 import { adjustScaleOverAspect, delay, ScaleOverAspect, threePosToPixiPoint } from "../helpers";
-import { sprites } from "../loader";
+import { sounds, sprites } from "../loader";
 import { ALL_SEED_TYPES, UI_SEED_ITEM_POSITION, SeedType } from "../config";
 import { Environment } from "./Environment";
 import { Easing, Tween } from "@tweenjs/tween.js";
@@ -48,12 +48,13 @@ export class SeedSelectWheel {
             });
         }
 
-        Environment.events.on("bed-position-changed", ()=>{this.setPosToBed();});
+        Environment.events.on("bed-position-changed", ()=>{this.setPosToBed()});
     }
 
     private onClick(seedItems: SeedItem): void {
         seedItems.isAvailable = false;
         Environment.events.fire("seed-selected", seedItems.type, this.targetBed);
+        sounds["ui_pop"].play();
         this.hide();
     }
 

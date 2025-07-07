@@ -17,7 +17,7 @@ import {
     GARDEN_BED_COLOR_WET
 } from "../config";
 import { Mesh, MeshPhysicalMaterial, Object3D } from "three";
-import { models } from "../loader";
+import { models, sounds } from "../loader";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { Environment } from "./Environment";
 import { Easing, Tween } from "@tweenjs/tween.js";
@@ -221,6 +221,7 @@ export class GardenBed extends Object3D {
             new Tween(hoe.rotation).to({x: Math.PI*0.5}, 350).delay(250 + ((350+250)* i)).easing(Easing.Cubic.In).group(grp).start(Environment.gameTimeMs).chain(
                 new Tween(hoe.rotation).to({x: Math.PI*0.25}, 250).easing(Easing.Cubic.Out).group(grp)
             ).onComplete(()=>{
+                sounds["dig"].play();
                 this.popWeed(i, true);
             })
         }
@@ -231,6 +232,8 @@ export class GardenBed extends Object3D {
     }
 
     private playSeedVFX(type: SeedType): void {
+        sounds["seeds"].play();
+
         if (type == "corn") {
             seeds_fall.startColor.min = SEED_COLOR_CORN[0];
             seeds_fall.startColor.max = SEED_COLOR_CORN[1];
@@ -250,6 +253,8 @@ export class GardenBed extends Object3D {
     }
 
     private playWaterVFX(): void {
+        sounds["water"].play();
+
         water_bucket.startColor.min = colorStringToRGB("#001eff");
         water_bucket.startColor.max = colorStringToRGB("#6dfff0");
 
@@ -267,6 +272,7 @@ export class GardenBed extends Object3D {
     onClick(): void {
         if (this.plant == undefined) {
             Environment.events.fire("garden-bed-open-seed-menu", this);
+            sounds["click"].play();
         }
     }
 

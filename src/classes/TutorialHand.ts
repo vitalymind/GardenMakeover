@@ -5,9 +5,10 @@ import { Environment } from "./Environment";
 import { threePosToPixiPoint } from "../helpers";
 import { Easing, Tween } from "@tweenjs/tween.js";
 
-export class TutorialHand extends Container{
+export class TutorialHand extends Container {
     private sprite: Sprite;
 
+    private fadeTween: Tween<Sprite>;
     private moveTweenIn: Tween<Point>;
     private moveTweenOut: Tween<Point>;
 
@@ -24,8 +25,13 @@ export class TutorialHand extends Container{
     }
 
     private hide(): void {
-        new Tween(this.sprite).to({alpha: 0}, 150).group(Environment.tweenGroup).start(Environment.gameTimeMs)
+        if (this.fadeTween) {
+            this.fadeTween.stop();
+            this.fadeTween = null;
+        }
+        this.fadeTween = new Tween(this.sprite).to({alpha: 0}, 150).group(Environment.tweenGroup).start(Environment.gameTimeMs)
             .onComplete(()=>{
+                this.visible = false;
                 if (this.moveTweenIn) {
                     this.moveTweenIn.stopChainedTweens();
                     this.moveTweenIn.stop();
@@ -44,8 +50,16 @@ export class TutorialHand extends Container{
         this.moveTweenIn.chain(this.moveTweenOut);
         this.moveTweenOut.chain(this.moveTweenIn);
 
-        new Tween(this.sprite).to({alpha: 1}, 250).group(Environment.tweenGroup).start(Environment.gameTimeMs)
-            .onComplete(()=>{this.moveTweenIn.start(Environment.gameTimeMs)});
+        if (this.fadeTween) {
+            this.fadeTween.stop();
+            this.fadeTween = null;
+        }
+        this.fadeTween = new Tween(this.sprite).to({alpha: 1}, 150).group(Environment.tweenGroup).start(Environment.gameTimeMs)
+            .onComplete(()=>{
+                if (this.moveTweenIn) {
+                    this.moveTweenIn.start(Environment.gameTimeMs)
+                }
+            });
 
     }
 

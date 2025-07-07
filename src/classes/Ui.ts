@@ -102,7 +102,8 @@ export class Ui {
     }
 
     toggleTutorial(on: boolean): void {
-        new Tween(this.tutorialText).to({alpha: (on ? 1 : 0)}, 250).group(Environment.tweenGroup).start(Environment.gameTimeMs);
+        new Tween(this.tutorialText).to({alpha: (on ? 1 : 0)}, 250).group(Environment.tweenGroup).start(Environment.gameTimeMs)
+            .onComplete(()=>{this.tutorialText.visible = on});
     }
 
     update(dt: number): void {

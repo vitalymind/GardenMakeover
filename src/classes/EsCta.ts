@@ -1,6 +1,6 @@
 import { Container, Sprite, TextStyle, Text, PointData } from "pixi.js";
 import { Environment } from "./Environment";
-import { sprites } from "../loader";
+import { sounds, sprites } from "../loader";
 import { Tween } from "@tweenjs/tween.js";
 
 //Separate class because it scales from center, unlike ingame CTA
@@ -51,6 +51,7 @@ export class EsCta extends Container {
     }
 
     private onClick(): void {
+        sounds["ui_pop"].play();
         const grp = Environment.tweenGroup;
         new Tween(this.animated.position).to({x:5, y:10}, 50).group(grp).chain(
             new Tween(this.animated.position).to({x:0, y:0}, 80).group(grp)

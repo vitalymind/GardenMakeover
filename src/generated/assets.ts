@@ -1,14 +1,32 @@
-import { ImportedGltf, ImportedSpritesheet, ImportedImages } from "../loader";
+import { ImportedGltf, ImportedSpritesheet, ImportedImages, ImportedSound } from "../loader";
 export const importedSpritesheet: ImportedSpritesheet[] = [];
 export const importedImages: ImportedImages[] = [];
 export const importedTextures: ImportedImages[] = [];
 export const importedGltf: ImportedGltf[] = [];
+export const importedSounds: ImportedSound[] = [];
 
 import Texture_skybox_jpg from "../assets/textures/skybox.jpg";
 importedTextures.push({name: "skybox", img: Texture_skybox_jpg});
 
-import Texture_skybox_resting_place_webp from "../assets/textures/skybox_resting_place.webp";
-importedTextures.push({name: "skybox_resting_place", img: Texture_skybox_resting_place_webp});
+import Sound_bloop_1 from "../assets/sounds/bloop_1.mp3"; importedSounds.push({name: "bloop_1", dataUrl: Sound_bloop_1});
+
+import Sound_bloop_2 from "../assets/sounds/bloop_2.mp3"; importedSounds.push({name: "bloop_2", dataUrl: Sound_bloop_2});
+
+import Sound_bloop_3 from "../assets/sounds/bloop_3.mp3"; importedSounds.push({name: "bloop_3", dataUrl: Sound_bloop_3});
+
+import Sound_click from "../assets/sounds/click.mp3"; importedSounds.push({name: "click", dataUrl: Sound_click});
+
+import Sound_dig from "../assets/sounds/dig.mp3"; importedSounds.push({name: "dig", dataUrl: Sound_dig});
+
+import Sound_seeds from "../assets/sounds/seeds.mp3"; importedSounds.push({name: "seeds", dataUrl: Sound_seeds});
+
+import Sound_test from "../assets/sounds/test.mp3"; importedSounds.push({name: "test", dataUrl: Sound_test});
+
+import Sound_theme from "../assets/sounds/theme.mp3"; importedSounds.push({name: "theme", dataUrl: Sound_theme});
+
+import Sound_ui_pop from "../assets/sounds/ui_pop.mp3"; importedSounds.push({name: "ui_pop", dataUrl: Sound_ui_pop});
+
+import Sound_water from "../assets/sounds/water.mp3"; importedSounds.push({name: "water", dataUrl: Sound_water});
 
 import Sheet_common_json from "../assets/sheets/common.json";
 import Sheet_common_png from "../assets/sheets/common.png";

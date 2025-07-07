@@ -1,7 +1,8 @@
 import { Assets, Spritesheet, SpritesheetData, Texture as PIXI_Texture } from "pixi.js";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { importedGltf, importedImages, importedSpritesheet, importedTextures } from "./generated/assets";
+import { importedGltf, importedImages, importedSounds, importedSpritesheet, importedTextures } from "./generated/assets";
 import { SRGBColorSpace, TextureLoader, Texture as THREE_Texture } from "three";
+import { Howl } from "howler";
 
 export interface ImportedSpritesheet {
     img: string;
@@ -15,6 +16,10 @@ export interface ImportedGltf {
     name: string;
     dataUrl: string;
 }
+export interface ImportedSound {
+    name: string;
+    dataUrl: string;
+}
 
 /*
     Exported ready for use items
@@ -22,6 +27,7 @@ export interface ImportedGltf {
 export const sprites: {[key: string]: PIXI_Texture} = {}
 export const textures: {[key: string]: THREE_Texture} = {}
 export const models: {[key: string]: GLTF} = {}
+export const sounds: {[key: string]: Howl} = {}
 
 /*
     Loader functions
@@ -58,13 +64,15 @@ const loadGltf = async (data: ImportedGltf,loader: GLTFLoader): Promise<void> =>
     return new Promise(resolve => {
         loader.load(data.dataUrl, (gltf: GLTF) => {
             models[data.name] = gltf;
-            console.log(`[Loader]: GLTF ${data.name} loaded`);
-
-            //gltf.scene.traverse((o: Object3D) => {});
-
+            console.log(`[Loader]: GLTF ${data.name} is loaded`);
             resolve();
         });
     });
+};
+
+const loadSound = (data: ImportedSound): void => {
+    sounds[data.name] = new Howl({src: data.dataUrl, format: 'mp3'});
+    console.log(`[Loader]: Sound ${data.name} is loaded `);
 };
 
 export const loadAssets = async (): Promise<void> => {
@@ -84,6 +92,11 @@ export const loadAssets = async (): Promise<void> => {
     }
     for (const data of importedTextures) {
         await loadTexture(data, textureLoader);
+    }
+
+    //Load sounds
+    for (const data of importedSounds) {
+        loadSound(data);
     }
 }
 

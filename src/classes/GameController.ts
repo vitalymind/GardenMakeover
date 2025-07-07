@@ -4,6 +4,7 @@ import { GameScene } from "./GameScene";
 import { GardenBed } from "./GardenBed";
 import { Ui } from "./Ui";
 import { PLANTS_NEEDED_TO_GROW } from "../config";
+import { sounds } from "../loader";
 
 export class GameController {
     gameScene: GameScene;
@@ -17,6 +18,9 @@ export class GameController {
     private grownPlants = 0;
     gameFinished = false;
 
+    private lastPlayed = "";
+    private bloops = ["bloop_1","bloop_2","bloop_3"];
+
     constructor() {
         //Creating scenery
         this.gameScene = new GameScene(this);
@@ -28,7 +32,9 @@ export class GameController {
         this.ray = new Raycaster();
         this.boundMousedown = this.mousedown.bind(this);
         window.addEventListener("pointerdown", this.boundMousedown);
-        Environment.events.on("pixi-clicked", ()=>{this.lastTimePixiClicked = Environment.gameTimeMs});
+        Environment.events.on("pixi-clicked", ()=>{
+            this.lastTimePixiClicked = Environment.gameTimeMs;
+        });
 
         //Create garden beds
         this.gardenBeds.push( new GardenBed(this, "left") );
@@ -37,6 +43,10 @@ export class GameController {
 
         Environment.events.on("camera-intro-done", ()=>{
             this.allowClicks = true;
+        });
+
+        Environment.events.on("play-random-bloop-sfx", ()=>{
+            this.playRandomBloop();
         });
 
         Environment.events.on("plant-fully-grown", ()=>{
@@ -52,15 +62,15 @@ export class GameController {
     gameStart(): void {
         this.gameScene.startCameraMove();
         this.ui.unhideScreen();
+        sounds["theme"].loop(true);
+        sounds["theme"].play();
     }
 
     private mousedown(event: MouseEvent): void {
         if (!this.allowClicks || this.gameFinished) {return}
         if (event.button == 0) {
             if (Math.round(Environment.gameTimeMs) == Math.round(this.lastTimePixiClicked)) {return}
-
             const hit = this.raycast(event);
-            
             if (hit && hit.type == "gardenBed") {
                 (hit.obj as GardenBed).onClick();
                 Environment.events.fire("hide-tutorial");
@@ -87,6 +97,12 @@ export class GameController {
             }
         }
         return undefined;
+    }
+
+    private playRandomBloop() {
+        const available = this.bloops.filter(sound => {return sound !== this.lastPlayed});
+        this.lastPlayed = available[Math.floor(Math.random() * available.length)];
+        sounds[this.lastPlayed].play();
     }
 
     update(dt: number): void {

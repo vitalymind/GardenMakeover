@@ -13,6 +13,7 @@ const PATH_MODELS = path.join(PATH_ASSETS, "models");
 const PATH_IMAGES = path.join(PATH_ASSETS, "images");
 const PATH_TEXTURES = path.join(PATH_ASSETS, "textures");
 const PATH_SHEETS = path.join(PATH_ASSETS, "sheets");
+const PATH_SOUNDS = path.join(PATH_ASSETS, "sounds");
 const PATH_GENERATED = path.join(PATH_ROOT, "src/generated");
 const PATH_GENERATED_ASSETS = path.join(PATH_GENERATED, "assets.ts");
 const PATH_GENERATED_STATICOBJECTS = path.join(PATH_GENERATED, "staticObjects.ts");
@@ -44,7 +45,7 @@ export const staticObjects: StaticObject[] = [];\n\n`
 }
 
 function generateAssetsTs(): void {
-    let text = `import { ImportedGltf, ImportedSpritesheet, ImportedImages } from "../loader";\nexport const importedSpritesheet: ImportedSpritesheet[] = [];\nexport const importedImages: ImportedImages[] = [];\nexport const importedTextures: ImportedImages[] = [];\nexport const importedGltf: ImportedGltf[] = [];\n\n`;
+    let text = `import { ImportedGltf, ImportedSpritesheet, ImportedImages, ImportedSound } from "../loader";\nexport const importedSpritesheet: ImportedSpritesheet[] = [];\nexport const importedImages: ImportedImages[] = [];\nexport const importedTextures: ImportedImages[] = [];\nexport const importedGltf: ImportedGltf[] = [];\nexport const importedSounds: ImportedSound[] = [];\n\n`;
 
     for (const p of fs.readdirSync(PATH_IMAGES)) {
         const fileName = path.parse(p);
@@ -57,6 +58,13 @@ function generateAssetsTs(): void {
         const fileName = path.parse(p);
         if ([".jpg", ".webp"].includes(fileName.ext)) {
             text += generateTextures(fileName.name, fileName.ext.replace(".",""));
+        }
+    }
+
+    for (const p of fs.readdirSync(PATH_SOUNDS)) {
+        const fileName = path.parse(p);
+        if (fileName.ext == ".mp3") {
+            text += generateSound(fileName.name);
         }
     }
 
@@ -88,6 +96,10 @@ function generateTextures(name: string, ext: string): string {
     return `import Texture_${name}_${ext} from "../assets/textures/${name}.${ext}";\nimportedTextures.push({name: "${name}", img: Texture_${name}_${ext}});\n\n`
 }
 
+function generateSound(name: string): string {
+    return `import Sound_${name} from "../assets/sounds/${name}.mp3"; importedSounds.push({name: "${name}", dataUrl: Sound_${name}});\n\n`;
+}
+
 function generateImage(name: string, ext: string): string {
     return `import Image_${name}_${ext} from "../assets/images/${name}.${ext}";\nimportedImages.push({name: "${name}", img: Image_${name}_${ext}});\n\n`
 }
@@ -115,6 +127,7 @@ async function build(): Promise<void> {
             '.webp': 'dataurl',
             '.png': 'dataurl',
             '.glb': 'dataurl',
+            '.mp3': 'dataurl',
         },
     });
 
@@ -139,6 +152,7 @@ async function startDev(): Promise<void> {
             '.webp': 'dataurl',
             '.png': 'dataurl',
             '.glb': 'dataurl',
+            '.mp3': 'dataurl',
         },
     });
 

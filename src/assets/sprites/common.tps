@@ -178,7 +178,7 @@
             <key type="filename">common/grape.png</key>
             <key type="filename">common/hoe.png</key>
             <key type="filename">common/item_frame.png</key>
-            <key type="filename">common/logo.webp</key>
+            <key type="filename">common/logo.png</key>
             <key type="filename">common/strawberry.png</key>
             <key type="filename">common/tomato.png</key>
             <struct type="IndividualSpriteSettings">
@@ -208,36 +208,6 @@
                 <rect>101,52,201,103</rect>
                 <key>scale9Paddings</key>
                 <rect>101,52,201,103</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">common/smoke.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0,0</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>20,20,40,39</rect>
-                <key>scale9Paddings</key>
-                <rect>20,20,40,39</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">common/smoke_alpha.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0,0</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>32,32,64,64</rect>
-                <key>scale9Paddings</key>
-                <rect>32,32,64,64</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

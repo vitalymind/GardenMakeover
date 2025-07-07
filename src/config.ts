@@ -79,6 +79,7 @@ export interface EventArgs {
     "camera-intro-done": [],
     "hide-tutorial": [],
     "bed-position-changed": [],
+    "play-random-bloop-sfx": [],
     "plant-fully-grown": [plant: Plant],
     "plant-open-action-menu": [plant: Plant, acttion: PlantAction, cb: ()=>void],
 }

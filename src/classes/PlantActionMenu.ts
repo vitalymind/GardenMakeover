@@ -1,6 +1,6 @@
 import { Container, Sprite, Text, TextStyle } from "pixi.js";
 import { Environment } from "./Environment";
-import { sprites } from "../loader";
+import { sounds, sprites } from "../loader";
 import { Easing, Tween } from "@tweenjs/tween.js";
 import { PlantAction } from "../config";
 import { Plant } from "./Plant";
@@ -44,6 +44,7 @@ export class PlantActionMenu extends Container {
             .onComplete(()=>{
                 this.interactive = true;
                 this.on("pointerdown", ()=>{
+                    sounds["ui_pop"].play();
                     this.interactive = false;
                     this.cb();
                     this.hide();
