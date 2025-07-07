@@ -2,11 +2,12 @@
     "duration": 1.5,
     "looping": false,
     "emission": {
-        "rateOverTime": 100.0,
+        "rateOverTime": 10.0,
         "rateOverDistance": 0.0
     },
-    "startSize": { "min": 0.5, "max": 0.7 },
+    "startSize": { "min": 1.5, "max": 3.5 },
     "gravity": 10,
+    "startRotation": { "min": 0, "max": 360 },
     "sizeOverLifetime": {
         "isActive": true,
         "lifetimeCurve": {

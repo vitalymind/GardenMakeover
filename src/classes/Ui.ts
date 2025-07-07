@@ -24,6 +24,8 @@ export class Ui {
     private tutorialText: Text;
     endScreen: EndScreen;
 
+    private nightToggle: Container;
+
     constructor(public game: GameController) {
         this.stage = Environment.pixi.stage;
 
@@ -39,6 +41,16 @@ export class Ui {
         this.cta.scale.set(1);
         this.cta.pivot.set(40,-60);
         this.stage.addChild(this.cta);
+
+        const nightSprite = new Sprite(sprites["night"]);
+        nightSprite.scale.set(0.6);
+        nightSprite.anchor.set(1,1);
+        nightSprite.pivot.set(60,-700)
+        this.nightToggle = new Container();
+        this.nightToggle.interactive = true;
+        this.nightToggle.alpha = 0;
+        this.nightToggle.addChild(nightSprite);
+        this.stage.addChild(this.nightToggle);
 
         this.startSplash = new Sprite(Texture.WHITE);
         this.startSplash.anchor.set(0.5);
@@ -88,6 +100,18 @@ export class Ui {
         Environment.events.on("camera-intro-done", ()=>{
             this.tutorialHand.show();
             this.toggleTutorial(true);
+
+            new Tween(this.nightToggle).to({alpha: 1}, 80).group(Environment.tweenGroup).start(Environment.gameTimeMs).onComplete(()=>{
+                this.nightToggle.once("pointerdown", ()=>{
+                    Environment.events.fire("pixi-clicked");
+                    Environment.events.fire("switch-to-night");
+                    this.nightToggle.interactive = false;
+                    new Tween(this.nightToggle).to({alpha: 0}, 120).group(Environment.tweenGroup).start(Environment.gameTimeMs)
+                        .onComplete(()=>{
+                            this.nightToggle.visible = false;
+                        });
+                });
+            })
         });
     }
 
@@ -99,6 +123,8 @@ export class Ui {
     hideUI(): void {
         new Tween(this.logo).to({alpha: 0}, 250).group(Environment.tweenGroup).start(Environment.gameTimeMs);
         new Tween(this.cta).to({alpha: 0}, 250).group(Environment.tweenGroup).start(Environment.gameTimeMs);
+        this.nightToggle.interactive = false;
+        new Tween(this.nightToggle).to({alpha: 0}, 250).group(Environment.tweenGroup).start(Environment.gameTimeMs);
     }
 
     toggleTutorial(on: boolean): void {
@@ -149,5 +175,9 @@ export class Ui {
 
         //Planr actions
         for (const menu of this.activeMenus) {menu.resize()}
+
+        //Night toggle
+        this.nightToggle.position.set(botRight.x, topLeft.y);
+        adjustScaleOverAspect(this.nightToggle, config);
     }
 }

@@ -119,6 +119,7 @@ export class GameController {
             for (const bed of this.gardenBeds) {bed.update(dt)}
         }
         this.cow.update(dt);
+        this.gameScene.update(dt);
     }
 
     resize(w:number, h:number): void {

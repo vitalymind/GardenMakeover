@@ -5,8 +5,17 @@ export const importedTextures: ImportedImages[] = [];
 export const importedGltf: ImportedGltf[] = [];
 export const importedSounds: ImportedSound[] = [];
 
+import Texture_seed_png from "../assets/textures/seed.png";
+importedTextures.push({name: "seed", img: Texture_seed_png});
+
 import Texture_skybox_jpg from "../assets/textures/skybox.jpg";
 importedTextures.push({name: "skybox", img: Texture_skybox_jpg});
+
+import Texture_skybox_night_jpg from "../assets/textures/skybox_night.jpg";
+importedTextures.push({name: "skybox_night", img: Texture_skybox_night_jpg});
+
+import Texture_vfx_smoke_png from "../assets/textures/vfx_smoke.png";
+importedTextures.push({name: "vfx_smoke", img: Texture_vfx_smoke_png});
 
 import Sound_bloop_1 from "../assets/sounds/bloop_1.mp3"; importedSounds.push({name: "bloop_1", dataUrl: Sound_bloop_1});
 
@@ -62,6 +71,9 @@ importedGltf.push({name: "cow", dataUrl: Model_cow_glb});
 
 import Model_fence_glb from "../assets/models/fence.glb";
 importedGltf.push({name: "fence", dataUrl: Model_fence_glb});
+
+import Model_fireplace_glb from "../assets/models/fireplace.glb";
+importedGltf.push({name: "fireplace", dataUrl: Model_fireplace_glb});
 
 import Model_flower_glb from "../assets/models/flower.glb";
 importedGltf.push({name: "flower", dataUrl: Model_flower_glb});

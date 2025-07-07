@@ -1,10 +1,10 @@
 import { GardenBed } from "./GardenBed";
-import { Material, Object3D } from "three";
+import { Object3D } from "three";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { SEEDING_TIME, SeedType, TRIMMING_TIME, WATERING_TIME } from "../config";
-import { models, sounds } from "../loader";
+import { models } from "../loader";
 import { Easing, Tween } from "@tweenjs/tween.js";
-import { delay, getAllMaterials, randomRange } from "../helpers";
+import { delay, getAllMaterials } from "../helpers";
 import { Environment } from "./Environment";
 
 export class Plant {
@@ -17,8 +17,6 @@ export class Plant {
     private model_stage_1: Object3D;
     private model_stage_2: Object3D;
     private model_stage_3: Object3D;
-
-
 
     constructor(public gardenBed: GardenBed, private type: SeedType) {
         this.root = new Object3D();

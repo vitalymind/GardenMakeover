@@ -2,7 +2,7 @@
 
 "bucket.png":
 {
-	"frame": {"x":1,"y":1245,"w":225,"h":309},
+	"frame": {"x":391,"y":623,"w":225,"h":309},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":149,"y":80,"w":225,"h":309},
@@ -10,7 +10,7 @@
 },
 "corn.png":
 {
-	"frame": {"x":261,"y":1791,"w":220,"h":220},
+	"frame": {"x":454,"y":850,"w":220,"h":220},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":146,"y":144,"w":220,"h":220},
@@ -18,7 +18,7 @@
 },
 "cta.png":
 {
-	"frame": {"x":1,"y":851,"w":388,"h":195},
+	"frame": {"x":473,"y":426,"w":388,"h":195},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":9,"y":6,"w":388,"h":195},
@@ -26,7 +26,7 @@
 },
 "cta_shadow.png":
 {
-	"frame": {"x":1,"y":1048,"w":388,"h":195},
+	"frame": {"x":1,"y":449,"w":388,"h":195},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":9,"y":6,"w":388,"h":195},
@@ -34,7 +34,7 @@
 },
 "grape.png":
 {
-	"frame": {"x":312,"y":1245,"w":181,"h":284},
+	"frame": {"x":702,"y":623,"w":181,"h":284},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":167,"y":81,"w":181,"h":284},
@@ -42,16 +42,16 @@
 },
 "hoe.png":
 {
-	"frame": {"x":1,"y":1472,"w":234,"h":292},
-	"rotated": true,
+	"frame": {"x":1,"y":909,"w":234,"h":292},
+	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":153,"y":103,"w":234,"h":292},
 	"sourceSize": {"w":512,"h":512}
 },
 "item_frame.png":
 {
-	"frame": {"x":1,"y":449,"w":400,"h":423},
-	"rotated": true,
+	"frame": {"x":473,"y":1,"w":400,"h":423},
+	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":54,"y":35,"w":400,"h":423},
 	"sourceSize": {"w":512,"h":512}
@@ -64,9 +64,17 @@
 	"spriteSourceSize": {"x":24,"y":33,"w":470,"h":446},
 	"sourceSize": {"w":512,"h":512}
 },
+"night.png":
+{
+	"frame": {"x":676,"y":909,"w":209,"h":208},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":24,"w":209,"h":208},
+	"sourceSize": {"w":256,"h":256}
+},
 "strawberry.png":
 {
-	"frame": {"x":295,"y":1531,"w":258,"h":215},
+	"frame": {"x":237,"y":909,"w":258,"h":215},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":127,"y":149,"w":258,"h":215},
@@ -74,7 +82,7 @@
 },
 "tomato.png":
 {
-	"frame": {"x":1,"y":1708,"w":258,"h":258},
+	"frame": {"x":1,"y":646,"w":258,"h":258},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":128,"y":112,"w":258,"h":258},
@@ -82,7 +90,7 @@
 },
 "tutorial_hand.png":
 {
-	"frame": {"x":391,"y":851,"w":119,"h":153},
+	"frame": {"x":261,"y":646,"w":119,"h":153},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":119,"h":153},
@@ -93,8 +101,8 @@
 	"version": "1.1",
 	"image": "common.png",
 	"format": "RGBA8888",
-	"size": {"w":511,"h":2012},
+	"size": {"w":885,"h":1202},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:9c2409c9820819329e6773f2403b01ed:e4c08f510054c90e635d36ca66af5e5c:5f8fd6ff9a85da144f948e71be2ecc32$"
+	"smartupdate": "$TexturePacker:SmartUpdate:254dd070b2070d2674a6877d65600e2f:12e5b95365c0fcd63bf8370cbc811c07:5f8fd6ff9a85da144f948e71be2ecc32$"
 }
 }

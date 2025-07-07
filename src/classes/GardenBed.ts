@@ -17,7 +17,7 @@ import {
     GARDEN_BED_COLOR_WET
 } from "../config";
 import { Mesh, MeshPhysicalMaterial, Object3D } from "three";
-import { models, sounds } from "../loader";
+import { models, sounds, textures } from "../loader";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { Environment } from "./Environment";
 import { Easing, Tween } from "@tweenjs/tween.js";
@@ -247,6 +247,9 @@ export class GardenBed extends Object3D {
             seeds_fall.startColor.min = SEED_COLOR_TOMATO[0];
             seeds_fall.startColor.max = SEED_COLOR_TOMATO[1];
         }
+        
+        //@ts-ignore
+        seeds_fall.map = textures["seed"];
         //@ts-ignore
         this.seedsEmitter = createParticleSystem(seeds_fall);
         this.add(this.seedsEmitter.instance);
@@ -254,9 +257,10 @@ export class GardenBed extends Object3D {
 
     private playWaterVFX(): void {
         sounds["water"].play();
-
-        water_bucket.startColor.min = colorStringToRGB("#001eff");
-        water_bucket.startColor.max = colorStringToRGB("#6dfff0");
+        //@ts-ignore
+        water_bucket.map = textures["vfx_smoke"];
+        water_bucket.startColor.min = colorStringToRGB("#527e87", true);
+        water_bucket.startColor.max = colorStringToRGB("#51bbc9", true);
 
         //@ts-ignore
         this.waterEmitter = createParticleSystem(water_bucket);

@@ -1,23 +1,28 @@
-import { AmbientLight, DirectionalLight, DirectionalLightHelper, HemisphereLight, Mesh, MeshBasicMaterial, Object3D, PCFSoftShadowMap, Scene, SkinnedMesh, SphereGeometry } from "three";
+import {  Color, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, Object3D, PCFSoftShadowMap, Scene, SkinnedMesh, SphereGeometry, Vector3 } from "three";
 import { GameController } from "./GameController";
 import { Environment } from "./Environment";
 import { models, textures } from "../loader";
 import { staticObjects, StaticObject } from "../generated/staticObjects";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
-import { colorStringToNumber, delay } from "../helpers";
+import { colorStringToNumber, delay, lerp } from "../helpers";
 import { CAMERA_FOV_LANDSCAPE, CAMERA_FOV_PORTRAIT, CAMERA_GAMEPLAY_POS, CAMERA_INIT_POS, CAMERA_INTRO_TIME, CAMERA_OFFSET_LANDSCAPE, CAMERA_OFFSET_PORTRAIT, MODEL_CONFIGS } from "../config";
 import { ThreeCameraController } from "./ThreeCameraController";
-
-
+import { Easing, Tween } from "@tweenjs/tween.js";
+import { Campfire } from "./Campfire";
 
 export class GameScene {
     private stage: Scene;
-    private skyboxMesh: Mesh;
     private camCtrl: ThreeCameraController;
-
+    private materialNightSky: MeshBasicMaterial;
     trackableObjects: {[id: string]: Object3D} = {}
 
     private static id = 0;
+
+    hemisphereLight: HemisphereLight;
+    directionalLight: DirectionalLight;
+
+
+    campfire: Campfire;
 
     constructor(public game: GameController) {
         this.stage = Environment.three.stage;
@@ -41,6 +46,11 @@ export class GameScene {
 
         //Debug
         //this.registerListner();
+
+        //Extra
+        this.campfire = new Campfire();
+
+        Environment.events.once("switch-to-night", ()=>{this.switchToNight()});
     }
 
     private setShadow(): void {
@@ -76,7 +86,7 @@ export class GameScene {
     }
 
     async startCameraMove(): Promise<void> {
-        //camCtrl.setTo(CAMERA_GAMEPLAY_POS);
+        //this.camCtrl.setTo(CAMERA_GAMEPLAY_POS);
         this.camCtrl.moveTo([CAMERA_GAMEPLAY_POS], CAMERA_INTRO_TIME);
         await delay(CAMERA_INTRO_TIME*1000);
         Environment.events.fire("camera-intro-done");
@@ -86,10 +96,11 @@ export class GameScene {
         Environment.three.renderer.shadowMap.enabled = true;
         Environment.three.renderer.shadowMap.type = PCFSoftShadowMap;
 
-        const ambientLight = new HemisphereLight(colorStringToNumber("#fff28d"), colorStringToNumber("#777788"), 2.5);
-        this.stage.add(ambientLight);
+        this.hemisphereLight = new HemisphereLight(colorStringToNumber("#fff28d"), colorStringToNumber("#777788"), 2.5);
+        this.stage.add(this.hemisphereLight);
 
         const light = new DirectionalLight(colorStringToNumber("#f5ff82"), 1.5);
+        this.directionalLight = light;
         light.position.set(-25, 20, -15);
         light.castShadow = true;
         light.shadow.mapSize.width = 4096;
@@ -104,16 +115,26 @@ export class GameScene {
         light.shadow.camera.near = 1;
         light.shadow.camera.far = 100;
 
-        const helper = new DirectionalLightHelper(light);
-        this.stage.add(helper);
     }
 
     private makeSkybox(): void {
         const geometry = new SphereGeometry( 500, 60, 40 );
         geometry.scale( -1, 1, 1 );
         const material = new MeshBasicMaterial( { map: textures["skybox"]} );
-        this.skyboxMesh = new Mesh( geometry, material );
-        this.stage.add(this.skyboxMesh);
+        const skyboxMesh = new Mesh( geometry, material );
+        this.stage.add(skyboxMesh);
+
+        const geometry2 = new SphereGeometry( 490, 60, 40 );
+        geometry2.scale( -1, 1, 1 );
+        this.materialNightSky = new MeshBasicMaterial( { map: textures["skybox_night"]} );
+        this.materialNightSky.transparent = true;
+        this.materialNightSky.opacity = 0;
+        const skyboxMeshNight = new Mesh( geometry2, this.materialNightSky );
+        this.stage.add(skyboxMeshNight);
+    }
+
+    update(dt:number): void {
+        this.campfire.update(dt);
     }
 
     resize(): void {
@@ -130,10 +151,47 @@ export class GameScene {
         }
     }
 
+    async switchToNight(): Promise<void> {
+        const totalTime = 10;
+
+        const hemiColorStart = new Color("#fff28d");
+        const hemiColorEnd = new Color("#aea5c2");
+        const asdasd = new Color("#777788");
+
+        const directColorStart = new Color("#f5ff82");
+        const directColorEnd = new Color("#e9dfff");
+
+        const directionalPosStart = new Vector3(-25, 20, -15);
+        const directionalPosEnd = new Vector3(77,15,-21);
+
+        const time = { t: 0 };
+        new Tween(time)
+            .to({ t: 1 }, totalTime * 1000)
+            .easing(Easing.Linear.None)
+            .onUpdate(() => {
+                const t = time.t;
+
+                this.hemisphereLight.color.lerpColors(hemiColorStart, hemiColorEnd, t);
+                this.hemisphereLight.groundColor = asdasd;
+                this.hemisphereLight.intensity = lerp(2.5, 0.35, t);
+
+                this.directionalLight.color.lerpColors(directColorStart, directColorEnd, t);
+                this.directionalLight.position.lerpVectors(directionalPosStart, directionalPosEnd, t);
+                this.directionalLight.intensity = lerp(1.5, 0.1, t);
+
+                this.materialNightSky.opacity = lerp(0,1,t);
+            })
+            .group(Environment.tweenGroup)
+            .start(Environment.gameTimeMs);
+        
+        await delay(totalTime*0.6*1000);
+        this.campfire.start();
+    }
+
     /*
         DEBUG
     */
-   /*
+    /*
     private registerListner(): void {
         window.addEventListener("keydown", (event: KeyboardEvent)=>{
             if (event.shiftKey && event.code == "KeyS") {

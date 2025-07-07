@@ -38,10 +38,10 @@ export class Cow extends Object3D {
         if (this.hidden) {return}
         this.count += 1;
 
-        if (this.count < 40) {
+        if (this.count < 24) {
             sounds["cow"].play()
         } else {
-            if (this.count >= 40) {
+            if (this.count >= 24) {
                 this.hidden = true;
                 this.hide();
             }

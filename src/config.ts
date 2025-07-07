@@ -36,7 +36,7 @@ export const CAMERA_OFFSET_PORTRAIT: Vector3Like = {x:0,y:0.3,z:-0.4};
 export const CAMERA_FOV_LANDSCAPE: number = 70;
 export const CAMERA_FOV_PORTRAIT: number = 55;
 
-export const CAMERA_INIT_POS: ThreeCameraSnapshot = {p:[3.433,8.084,22.273],r:[0.564,-0.055,0.035]};
+export const CAMERA_INIT_POS: ThreeCameraSnapshot = {p:[3.777,8.664,21.051],r:[0.664,-0.152,0.118]};
 export const CAMERA_GAMEPLAY_POS: ThreeCameraSnapshot = {p:[3.44,7.321,22.915],r:[-0.455,-0.01,-0.005]};
 export const CAMERA_INTRO_TIME = 2.5;
 
@@ -80,6 +80,7 @@ export interface EventArgs {
     "hide-tutorial": [],
     "bed-position-changed": [],
     "play-random-bloop-sfx": [],
+    "switch-to-night": [],
     "plant-fully-grown": [plant: Plant],
     "plant-open-action-menu": [plant: Plant, acttion: PlantAction, cb: ()=>void],
 }

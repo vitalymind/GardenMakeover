@@ -56,7 +56,7 @@ function generateAssetsTs(): void {
 
     for (const p of fs.readdirSync(PATH_TEXTURES)) {
         const fileName = path.parse(p);
-        if ([".jpg", ".webp"].includes(fileName.ext)) {
+        if ([".jpg", ".webp", ".png"].includes(fileName.ext)) {
             text += generateTextures(fileName.name, fileName.ext.replace(".",""));
         }
     }
