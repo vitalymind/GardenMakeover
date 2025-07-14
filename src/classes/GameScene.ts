@@ -155,11 +155,10 @@ export class GameScene {
         const totalTime = 10;
 
         const hemiColorStart = new Color("#fff28d");
-        const hemiColorEnd = new Color("#aea5c2");
-        const asdasd = new Color("#777788");
+        const hemiColorEnd = new Color("#7fc6e0");
 
         const directColorStart = new Color("#f5ff82");
-        const directColorEnd = new Color("#e9dfff");
+        const directColorEnd = new Color("#8ac9f9");
 
         const directionalPosStart = new Vector3(-25, 20, -15);
         const directionalPosEnd = new Vector3(77,15,-21);
@@ -172,12 +171,11 @@ export class GameScene {
                 const t = time.t;
 
                 this.hemisphereLight.color.lerpColors(hemiColorStart, hemiColorEnd, t);
-                this.hemisphereLight.groundColor = asdasd;
-                this.hemisphereLight.intensity = lerp(2.5, 0.35, t);
+                this.hemisphereLight.intensity = lerp(2.5, 1, t);
 
                 this.directionalLight.color.lerpColors(directColorStart, directColorEnd, t);
                 this.directionalLight.position.lerpVectors(directionalPosStart, directionalPosEnd, t);
-                this.directionalLight.intensity = lerp(1.5, 0.1, t);
+                this.directionalLight.intensity = lerp(1.5, 1, t);
 
                 this.materialNightSky.opacity = lerp(0,1,t);
             })

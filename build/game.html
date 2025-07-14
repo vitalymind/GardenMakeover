@@ -104521,8 +104521,8 @@ void main() {
         this.flickTimer = Math.random() * 1 + 0.9;
         this.timeIn = randomRange(90, 150);
         this.timeOut = randomRange(90, 150);
-        this.intencityIn = randomRange(18, 20);
-        this.intencityOut = randomRange(15, 16);
+        this.intencityIn = randomRange(50, 55);
+        this.intencityOut = randomRange(43, 47);
         this.startFlicking();
       }
     }
@@ -104642,21 +104642,19 @@ void main() {
     async switchToNight() {
       const totalTime = 10;
       const hemiColorStart = new Color2("#fff28d");
-      const hemiColorEnd = new Color2("#aea5c2");
-      const asdasd = new Color2("#777788");
+      const hemiColorEnd = new Color2("#7fc6e0");
       const directColorStart = new Color2("#f5ff82");
-      const directColorEnd = new Color2("#e9dfff");
+      const directColorEnd = new Color2("#8ac9f9");
       const directionalPosStart = new Vector3(-25, 20, -15);
       const directionalPosEnd = new Vector3(77, 15, -21);
       const time = { t: 0 };
       new Tween(time).to({ t: 1 }, totalTime * 1e3).easing(Easing.Linear.None).onUpdate(() => {
         const t2 = time.t;
         this.hemisphereLight.color.lerpColors(hemiColorStart, hemiColorEnd, t2);
-        this.hemisphereLight.groundColor = asdasd;
-        this.hemisphereLight.intensity = lerp2(2.5, 0.35, t2);
+        this.hemisphereLight.intensity = lerp2(2.5, 1, t2);
         this.directionalLight.color.lerpColors(directColorStart, directColorEnd, t2);
         this.directionalLight.position.lerpVectors(directionalPosStart, directionalPosEnd, t2);
-        this.directionalLight.intensity = lerp2(1.5, 0.1, t2);
+        this.directionalLight.intensity = lerp2(1.5, 1, t2);
         this.materialNightSky.opacity = lerp2(0, 1, t2);
       }).group(Environment.tweenGroup).start(Environment.gameTimeMs);
       await delay(totalTime * 0.6 * 1e3);

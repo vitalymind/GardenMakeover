@@ -82,8 +82,8 @@ export class Campfire {
             this.flickTimer = Math.random()*1 + 0.9;
             this.timeIn = randomRange(90,150);
             this.timeOut = randomRange(90,150);
-            this.intencityIn = randomRange(18,20);
-            this.intencityOut = randomRange(15,16);
+            this.intencityIn = randomRange(50,55);
+            this.intencityOut = randomRange(43,47);
             this.startFlicking();
         }
 
